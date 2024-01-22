@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Role;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -23,6 +24,11 @@ class AppFixtures extends Fixture
 
         $faker = Factory::create("en_GB");
 
+        // Handle roles
+        $adminRole = new Role();
+        $adminRole->setName('ROLE_ADMIN');
+        $manager->persist($adminRole);
+
         // Handle admin account
         $admin = new User();
         $admin->setFirstName("Jeremy")
@@ -34,7 +40,6 @@ class AppFixtures extends Fixture
 
         // Handle users
         $users = [];
-
         for($i = 1; $i <= 50; $i++){
             $user = new User();
             $gender = $faker->randomElement(['male', 'female']);
