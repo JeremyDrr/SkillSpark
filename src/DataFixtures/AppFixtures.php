@@ -35,7 +35,8 @@ class AppFixtures extends Fixture
             ->setLastName("Durrieu")
             ->setEmail("jeremy@skillspark.com")
             ->setPicture("https://randomuser.me/api/portraits/men/52.jpg")
-            ->setPassword($this->encoder->hashPassword($admin, 'password'));
+            ->setPassword($this->encoder->hashPassword($admin, 'password'))
+            ->addRole($adminRole);
         $manager->persist($admin);
 
         // Handle users

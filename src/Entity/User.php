@@ -61,6 +61,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\PreUpdate]
     public function initialise()
     {
+
+        if(empty($this->picture)){
+            $this->picture = '/assets/img/user.svg';
+        }
+
         if(empty($this->slug)){
             $slugify = new Slugify();
             $this->slug = $slugify->slugify($this->firstName.' '.$this->lastName);
@@ -94,6 +99,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->lastName = $lastName;
 
         return $this;
+    }
+
+    public function getFullName(): ?string
+    {
+        return "{$this->firstName} {$this->lastName}";
     }
 
     public function getEmail(): ?string
