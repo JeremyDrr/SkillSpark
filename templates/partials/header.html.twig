@@ -17,7 +17,7 @@
                     <a class="nav-link" href="{{ path('homepage') }}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Courses</a>
+                    <a class="nav-link" href="{{ path('courses_index') }}">Courses</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#about">About</a>
@@ -36,12 +36,12 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="accountDropdownLink">
                             {% if is_granted('ROLE_ADMIN') %}
-                                <a href="" class="dropdown-item">Create a course</a>
                                 <a href="" class="dropdown-item">Admin Panel</a>
                                 <div class="dropdown-divider"></div>
                             {% endif %}
-                            <a href="" class="dropdown-item">My account</a>
-                            <a href="" class="dropdown-item">Settings</a>
+                            <a href="{{ path('courses_create') }}" class="dropdown-item">Create a course</a>
+                            <a href="{{ path('user_show', {'slug': app.user.slug}) }}" class="dropdown-item">My account</a>
+                            <a href="{{ path('user_edit', {'slug': app.user.slug}) }}" class="dropdown-item">Settings</a>
                             <div class="dropdown-divider"></div>
                             <a href="{{ path('logout') }}" class="dropdown-item">Disconnect</a>
 

@@ -2,6 +2,8 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Course;
+use App\Entity\Level;
 use App\Entity\Role;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -29,6 +31,21 @@ class AppFixtures extends Fixture
         $adminRole->setName('ROLE_ADMIN');
         $manager->persist($adminRole);
 
+        // Handle levels
+        $levels = [];
+        $beginner = new Level();
+        $beginner->setName('Beginner');
+        $levels[] = $beginner;
+        $manager->persist($beginner);
+        $intermediate = new Level();
+        $intermediate->setName('Intermediate');
+        $levels[] = $intermediate;
+        $manager->persist($intermediate);
+        $advanced = new Level();
+        $advanced->setName('Advanced');
+        $levels[] = $advanced;
+        $manager->persist($advanced);
+
         // Handle admin account
         $admin = new User();
         $admin->setFirstName("Jeremy")
@@ -54,6 +71,18 @@ class AppFixtures extends Fixture
                 ->setPicture($picture);
             $manager->persist($user);
             $users[] = $user;
+        }
+
+        // Handle courses
+        for($i = 0; $i < 20; $i++){
+            $course = new Course();
+            $course->setTitle($faker->realTextBetween(5, 20))
+                ->setIntroduction($faker->realText)
+                ->setInstructor($users[mt_rand(0, count($users) -1)])
+                ->setThumbnail('https://place-hold.it/200x100')
+                ->setPrice($faker->randomFloat(2, 1, 2000))
+                ->setLevel($levels[mt_rand(0, count($levels) -1)]);
+            $manager->persist($course);
         }
 
         $manager->flush();

@@ -1,0 +1,18 @@
+{% set url = path('course_show', {'slug': course.slug}) %}
+
+<div class="col-md-3">
+    <div class="card border-light rounded-2 mb-3">
+        <img src="{{ course.thumbnail }}" class="card-img-top" alt="Course Image">
+        <div class="card-body">
+            <h5 class="card-title">{{ course.title }}</h5>
+            <p class="card-text">{{ course.introduction }}</p>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Instructor:</strong> {{ course.instructor.fullName }}</li>
+                <li class="list-group-item"><strong>Level:</strong> {{ course.level.name }}</li>
+                <li class="list-group-item"><strong>Price:</strong> {{ course.price}} €</li>
+            </ul>
+            <a href="#" class="btn btn-outline-primary mt-3 float-end">Add to cart 🛒</a>
+        </div>
+    </div>
+
+</div>

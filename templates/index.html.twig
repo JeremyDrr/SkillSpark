@@ -7,10 +7,130 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 mt-5 text-center">
-                <h1>SkillSpark</h1>
+                <h1>SkillSpark 📚</h1>
                 <h5>Unlock your potential, learn on the go.</h5>
             </div>
         </div>
     </div>
+
+    <div class="container my-5 py-5">
+        <div class="p-5 text-center bg-body-tertiary rounded-3">
+            <h1>🎓</h1>
+            <h1 class="text-body-emphasis">Courses</h1>
+            <p class="col-lg-8 mx-auto fs-5 text-muted">SkillSpark offers a vast diversity of courses for all needs. Whether you are looking for programming classes or gardening, you will find exactly what you are looking for here!</p>
+            <div class="d-inline-flex gap-2 mb-5">
+                <button class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill"><a href="{{ path('courses_index') }}">Explore courses</a></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container mt-5 pt-5" id="features">
+        <div class="row">
+            <div class="col-lg-4 text-center">
+                <h2>🚀 Interactive Learning</h2>
+                <p>Engage with interactive content and hands-on activities to reinforce your learning.</p>
+            </div>
+            <div class="col-lg-4 text-center">
+                <h2>🎯 Personalized Experience</h2>
+                <p>Customize your learning journey with personalized courses and adaptive learning paths.</p>
+            </div>
+            <div class="col-lg-4 text-center">
+                <h2>🌟 Expert Instructors</h2>
+                <p>Learn from industry experts and seasoned professionals in your chosen field.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="my-5">
+        <div class="p-5 text-center bg-body-tertiary">
+            <div class="container py-5">
+                <h1 class="text-body-emphasis">97% satisfied users</h1>
+                <p class="col-lg-8 mx-auto lead">Our students are 97% satisfied with the courses they take.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Courses Section -->
+    <div class="container mt-5" id="courses">
+        <h2 class="text-center mb-4">Featured Courses</h2>
+        <!-- Add your course cards here -->
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="course-image1.jpg" class="card-img-top" alt="Course Image 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Course Title 1</h5>
+                        <p class="card-text">Brief description of the course.</p>
+                        <a href="#" class="btn btn-primary">Enroll Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="course-image1.jpg" class="card-img-top" alt="Course Image 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Course Title 1</h5>
+                        <p class="card-text">Brief description of the course.</p>
+                        <a href="#" class="btn btn-primary">Enroll Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="course-image1.jpg" class="card-img-top" alt="Course Image 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Course Title 1</h5>
+                        <p class="card-text">Brief description of the course.</p>
+                        <a href="#" class="btn btn-primary">Enroll Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Testimonials from SkillSpark Students</h2>
+
+        <div id="testimonialsCarousel" class="carousel carousel-dark slide">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#testimonialsCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#testimonialsCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#testimonialsCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active" data-bs-interval="10000">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h5 class="lead">"The interactive learning experience provided by SkillSpark is unparalleled. The hands-on activities not only reinforced my understanding but made the entire learning process enjoyable. Highly recommended!"</h5>
+                            <p class="font-weight-bold text-right">- Emily Johnson, Data Scientist</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-item" data-bs-interval="2000">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h5 class="lead">"I appreciate the personalized experience SkillSpark offers. Being able to customize my learning journey and follow adaptive learning paths tailored to my needs has significantly boosted my confidence and skills."</h5>
+                            <p class="font-weight-bold text-right">- Michael Chen, UX Designer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="carousel-item">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h5 class="lead">"Learning from expert instructors on SkillSpark has been a game-changer for me. The depth of knowledge and real-world insights shared by industry professionals has accelerated my learning and career growth."</h5>
+                            <p class="font-weight-bold text-right">- Alex Rodriguez, Software Engineer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 {% endblock %}
