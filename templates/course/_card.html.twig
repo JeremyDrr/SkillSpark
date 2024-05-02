@@ -1,17 +1,22 @@
 {% set url = path('course_show', {'slug': course.slug}) %}
 
-<div class="col-md-3">
-    <div class="card border-light rounded-2 mb-3">
+<div class="col-md-3 mb-3 ">
+    <div class="card border-light rounded-2 h-100">
         <img src="{{ course.thumbnail }}" class="card-img-top" alt="Course Image">
         <div class="card-body">
-            <h5 class="card-title">{{ course.title }}</h5>
-            <p class="card-text">{{ course.introduction }}</p>
+            <h5 class="card-title fw-medium text-center">{{ course.title }}</h5>
+            <p class="card-text text-white-50">{{ course.introduction }}</p>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item"><strong>Instructor:</strong> {{ course.instructor.fullName }}</li>
+                <li class="list-group-item"><strong>Instructor:</strong> <a href="{{ path('user_show', {'slug': course.instructor.slug}) }}">{{ course.instructor.fullName }}</a><span><img
+                                src="{{ course.instructor.picture }}" alt="{{ course.instructor.picture }}'s avatar" class="avatar avatar-mini mx-2"></span></li>
                 <li class="list-group-item"><strong>Level:</strong> {{ course.level.name }}</li>
                 <li class="list-group-item"><strong>Price:</strong> {{ course.price}} €</li>
             </ul>
-            <a href="#" class="btn btn-outline-primary mt-3 float-end">Add to cart 🛒</a>
+            <a href="{{ path('cart_add', {'slug': course.slug}) }}" class="btn btn-outline-primary mt-3 float-end">Add to cart 🛒</a>
+            {% if app.user == course.instructor or is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('course_show', {'slug': course.slug}) }}" class="btn btn-success mt-3 float-start">Access 👀</a>
+            {% endif %}
+
         </div>
     </div>
 

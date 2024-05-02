@@ -26,7 +26,7 @@ class StripeService
     public function createProduct(Course $course): Product
     {
         return $this->getStripe()->products->create([
-           'name' => $course->getTitle(),
+            'name' => $course->getTitle(),
             'description' => $course->getIntroduction()
         ]);
     }
@@ -39,9 +39,10 @@ class StripeService
     public function createPrice(Course $course): Price
     {
         return $this->getStripe()->prices->create([
-            'unit_amount' => $course->getPrice(),
+            'unit_amount' => $course->getPrice()*100,
             'currency' => 'eur',
             'product' => $course->getStripeProductId()
         ]);
     }
+
 }

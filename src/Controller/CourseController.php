@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Chapter;
 use App\Entity\Course;
+use App\Form\CourseEditType;
 use App\Form\CourseType;
 use App\Form\SignupType;
 use App\Repository\CourseRepository;
@@ -46,20 +48,26 @@ class CourseController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()){
 
-            $stripeService = new StripeService();
+            foreach($course->getChapters() as $chapter) {
+                $chapter->setCourse($course);
+                $manager->persist($chapter);
+            }
 
+            $stripeService = new StripeService();
             $stripeProduct = $stripeService->createProduct($course);
             $course->setStripeProductId($stripeProduct->id);
-
             $stripePrice = $stripeService->createPrice($course);
             $course->setStripePriceId($stripePrice->id);
 
             $course->setInstructor($this->getUser());
 
+
             $manager->persist($course);
             $manager->flush();
 
-            return $this->redirectToRoute('homepage');
+            return $this->redirectToRoute('course_show', [
+                'slug' => $course->getSlug()
+            ]);
         }
 
         return $this->render('/course/create.html.twig', [
@@ -78,4 +86,47 @@ class CourseController extends AbstractController
             'course' => $course
         ]);
     }
+
+    /**
+     * @param Course $course
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
+    #[Route('/course/{slug}/delete', name: 'course_delete')]
+    public function delete(Course $course, EntityManagerInterface $manager): Response
+    {
+
+        $manager->remove($course);
+        $manager->flush();
+
+
+        return $this->redirectToRoute('courses_index');
+    }
+
+    #[Route('/course/{slug}/edit', name: 'course_edit')]
+    public function edit(Request $request, Course $course, EntityManagerInterface $manager){
+
+        $form = $this->createForm(CourseType::class, $course);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            foreach ($course->getChapters() as $chapter){
+                $chapter->setCourse($course);
+                $manager->persist($chapter);
+            }
+
+            $manager->persist($course);
+            $manager->flush();
+
+            return $this->redirectToRoute('course_show', [
+                'slug' => $course->getSlug()
+            ]);
+        }
+
+        return $this->render('/course/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
 }

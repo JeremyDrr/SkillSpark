@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block body %}
+    <div id="progress"></div>
+    <div class="article article-title">
+        <div class="container">
+            <div class="row">
+                <div class="col-8 my-3">
+                    <h1 class="text-uppercase lead display-6">{{ course.title }}</h1>
+                    <h4 class="lead">Level:
+                        {% if course.chapters | length <= 1 %}
+                            {{ course.level.name }} - {{ course.chapters | length }} chapter
+                        {% else %}
+                            {{ course.level.name }} - {{ course.chapters | length }} chapters
+                        {% endif %}
+
+                        <div class="div mt-3">
+                            {% if app.user and app.user == course.instructor or is_granted('ROLE_ADMIN') %}
+                                <a href="{{ path('course_edit', {'slug': course.slug}) }}" class="btn btn-outline-success">✒️ Edit the course</a>
+
+                                <a href="{{ path('course_delete', {'slug': course.slug})}}" class="btn btn-outline-danger" onclick="return confirm(`Are you sure you want to delete this course?`)">🗑️ Delete the course</a>
+                            {% endif %}
+                        </div>
+
+                    </h4>
+                </div>
+
+
+                <div class="col offset-2 pt-3">
+                    <h5>Share</h5>
+                    <hr>
+                    <div class="btn socialbtn share_twitter" data-url="{{ url('course_show', {'slug' : course.slug}) }}">
+                        <img src="/assets/img/x.svg" alt="Twitter's Logo">
+                    </div>
+                    <div class="btn socialbtn share_facebook" data-url="{{ url('course_show', {'slug' : course.slug}) }}">
+                        <img src="/assets/img/facebook.svg" alt="Facebook's Logo">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="course-sidebar">
+        <ul>
+            {% for chapter in course.chapters %}
+                <li class="mb-3">
+                    <a href="#chapter{{ loop.index }}"><strong>Chapter {{ loop.index }}:</strong> {{ chapter.title | raw }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="container my-5">
+        <div class="row my-5">
+            <div class="col-md-8">
+                {% for chapter in course.chapters %}
+                    <div id="chapter{{ loop.index }}">
+                        <h1>{{ chapter.title }}</h1>
+                        <p class="py-5">{{ chapter.content | raw }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="col-4">
+                {% set a = course.instructor %}
+                <div class="row mb-3 align-items-center">
+                    <div class="col-2">
+                        <a href="{{ path('user_show', {'slug': a.slug}) }}">
+                            <img src="{{a.picture}}" class="avatar avatar-medium" alt="Photo de profil de {{a.fullName}}">
+                        </a>
+                    </div>
+                    <div class="col-auto">
+                        <a href="{{ path('user_show', {'slug': a.slug}) }}">
+                            <h3>{{a.fullName}}  {% include 'partials/verified.html.twig' with {'user': a} %}</h3>
+                        </a>
+
+                        {% if a.courses | length <= 1 %}
+                            <span class="badge bg-dark">{{a.courses | length}} course</span>
+                        {% endif %}
+                        {% if a.courses | length >= 2 %}
+                            <span class="badge bg-dark">{{a.courses | length}} courses</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {{ a.introduction | raw }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="/assets/js/share.js"></script>
+{% endblock %}

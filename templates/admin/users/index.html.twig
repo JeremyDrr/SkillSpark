@@ -1,0 +1,72 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Users{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <h1 class="display-4 mt-5 my-2 text-center">Users Management</h1>
+        <p class="text-center lead">In this section, you can manage all user accounts. Create, edit, or delete user profiles, assign roles and permissions, and ensure optimal access control for a secure and efficient user experience.</p>
+
+        <div class="col-2 mb-5">
+            <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">🔎</div>
+                </div>
+                <input type="text" class="form-control border-success" id="inlineFormInputGroup" placeholder="User">
+            </div>
+        </div>
+
+        <table class="table table-hover border border-light">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Picture</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Roles</th>
+                <th>Courses</th>
+                <th>Actions</th>
+                <th>Moderation</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{user.id}}</td>
+                    <td> <img src="{{user.picture}}" alt="{{user.fullName}}'s avatar" class="avatar avatar-mini"></td>
+                    <td>{{user.firstName}}</td>
+                    <td>
+                        {{user.lastname}}
+                    </td>
+                    <td>
+                        {% for role in user.roles %}
+                            {% if role == "ROLE_ADMIN" %}
+                                <div class="badge bg-danger">Admin</div>
+                            {% else %}
+                                <div class="badge bg-secondary">User</div>
+                            {% endif %}
+                            <br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {{ user.courses | length }}
+                    </td>
+                    <td>
+                        <a href="" class="btn btn-outline-success">✒️</a>
+                        <a href="" class="btn btn-outline-danger">🗑️</a>
+                    </td>
+                    <td>
+
+                        {% if app.user != user %}
+                            <a href="" class="btn btn-outline-warning">⚠️ Warn</a>
+                            <a href="" class="btn btn-outline-warning">🛑 Ban</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}

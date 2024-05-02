@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Cocur\Slugify\Slugify;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,6 +12,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use function Symfony\Component\Clock\now;
 
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -55,21 +57,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'instructor', targetEntity: Course::class, orphanRemoval: true)]
     private Collection $courses;
 
+    #[ORM\Column(length: 255)]
+    private ?string $introduction = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $verified = null;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
         $this->courses = new ArrayCollection();
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function initialise()
     {
 
         if(empty($this->picture)){
-            $this->picture = '/assets/img/user.svg';
+            $this->picture = '/assets/img/user.png';
         }
 
+        if(empty($this->introduction)) {
+            $this->introduction = "Hi, I joined SkillSpark on the ". (new DateTime())->format('d-m-Y');
+        }
         if(empty($this->slug)){
             $slugify = new Slugify();
             $this->slug = $slugify->slugify($this->firstName.' '.$this->lastName);
@@ -236,6 +250,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $course->setInstructor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIntroduction(): ?string
+    {
+        return $this->introduction;
+    }
+
+    public function setIntroduction(string $introduction): static
+    {
+        $this->introduction = $introduction;
+
+        return $this;
+    }
+
+    public function isVerified(): ?bool
+    {
+        return $this->verified;
+    }
+
+    public function setVerified(?bool $verified): static
+    {
+        $this->verified = $verified;
 
         return $this;
     }

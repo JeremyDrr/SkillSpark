@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cart{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="col display-4 my-5">Shopping cart 🛒</h1>
+
+        <div class="row">
+            <div class="col-12">
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Course</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for element in data %}
+                        <tr>
+                            <td>{{ element.course.title }} - {{ element.course.instructor.fullName }}</td>
+                            <td>${{ element.course.price }}</td>
+                            <td>
+                                <button class="btn btn-danger">
+                                    <a href="{{ path('cart_remove', {'slug': element.course.slug}) }}" class="text-white text-decoration-none">Remove</a>
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4">Your cart is empty</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="4"></td>
+                    </tr>
+                    <tr>
+                        <td>
+                          <strong>Total:</strong>
+                        </td>
+                        <td>{{ total }}</td>
+                        <td><a href="{{ path('cart_empty') }}" class="btn btn-danger">Empty</a><a href="" class="btn btn-success mx-3">Checkout</a></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

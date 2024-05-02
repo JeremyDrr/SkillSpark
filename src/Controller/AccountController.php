@@ -89,7 +89,7 @@ class AccountController extends AbstractController
             $manager->flush();
 
             return $this->redirectToRoute('user_show', [
-                'user' => $user
+                'slug' => $user->getSlug()
             ]);
         }
 

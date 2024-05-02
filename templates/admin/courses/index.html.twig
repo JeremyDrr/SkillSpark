@@ -1,0 +1,48 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Courses{% endblock %}
+
+{% block body %}
+
+    <div class="container-fluid">
+        <h1 class="display-4 mt-5 my-2 text-center">Courses Mananagement</h1>
+        <p class="lead text-center">This section provides full control over SkillSpark's content. Create, edit, manage courses, and ensure the site stays fresh and informative.</p>
+        <a href="" class="btn btn-outline-success mb-5">➕ Create a course</a>
+
+        <table class="table table-hover border border-light">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Chapters</th>
+                <th>Price</th>
+                <th>Instructor</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for course in courses %}
+                <tr>
+                    <td>{{course.id}}</td>
+                    <td>{{course.title}}</td>
+                    <td>{{course.chapters | length}}</td>
+                    <td>{{course.price}} €</td>
+                    <td>
+                        <a href="">
+                            <img src="{{course.instructor.picture}}" alt="{{course.instructor.fullName}}" class="avatar avatar-micro mr-2">
+                            {{course.instructor.fullName}} </a>
+                    </td>
+
+                    <td>
+                        <a href="" class="btn btn-outline-success">✒️</a>
+                        <a href="" class="btn btn-outline-danger">🗑️</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}

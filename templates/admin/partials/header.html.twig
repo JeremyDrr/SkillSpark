@@ -1,0 +1,77 @@
+<style>
+    .navbar-title{
+        color: white;
+        font-size: 20px;
+        text-transform: uppercase;
+    }
+
+    .navbar-title-lab{
+        color: #FFC500;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <div class="ms-auto order-0">
+            <a class="navbar-brand navbar-title" href="{{ path('admin_dashboard') }}">Skill<span class="navbar-title-lab">Spark</span> | Admin Panel</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('admin_dashboard') }}">
+                        📊
+                        Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('admin_courses_index') }}">
+                        📗
+                        Courses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('admin_users_index') }}">
+                        👨🏻
+                        Users</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="">
+                        🚫
+                        Maintenance</a>
+                </li>
+            </ul>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('homepage') }}">
+                        👀
+                        Back to SkillSpark</a>
+                </li>
+                {% if app.user %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="accountDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{{ app.user.picture }}" class="avatar avatar-micro" alt="{{ app.user.fullName }}'s avatar"> {{ app.user.fullName }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark bg-dark-subtle" aria-labelledby="accountDropdownLink">
+                            <a href="{{ path("logout") }}" class="dropdown-item">Logout</a>
+                        </ul>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+{% for label, messages in app.flashes %}
+    <div class="container">
+        <div class="alert alert-{{ label }}">
+            {% for message in messages %}
+                <p>{{ message | raw }}</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endfor %}

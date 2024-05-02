@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\CourseRepository;
+use App\Services\StripeService;
 use Cocur\Slugify\Slugify;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -47,10 +50,31 @@ class Course
     #[ORM\Column(length: 255)]
     private ?string $stripePriceId = null;
 
+    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Chapter::class, orphanRemoval: true)]
+    private Collection $chapters;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $active = null;
+
+    public function __construct()
+    {
+        $this->chapters = new ArrayCollection();
+    }
+
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function PrePersist(): void
     {
+
+        if(empty($this->stripeProductId)){
+            $stripeService = new StripeService();
+
+            $stripeProduct = $stripeService->createProduct($this);
+            $this->setStripeProductId($stripeProduct->id);
+
+            $stripePrice = $stripeService->createPrice($this);
+            $this->setStripePriceId($stripePrice->id);
+        }
 
         if(empty($this->slug)){
             $slugify = new Slugify();
@@ -168,6 +192,48 @@ class Course
     public function setStripePriceId(string $stripePriceId): static
     {
         $this->stripePriceId = $stripePriceId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Chapter>
+     */
+    public function getChapters(): Collection
+    {
+        return $this->chapters;
+    }
+
+    public function addChapter(Chapter $chapter): static
+    {
+        if (!$this->chapters->contains($chapter)) {
+            $this->chapters->add($chapter);
+            $chapter->setCourse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChapter(Chapter $chapter): static
+    {
+        if ($this->chapters->removeElement($chapter)) {
+            // set the owning side to null (unless already changed)
+            if ($chapter->getCourse() === $this) {
+                $chapter->setCourse(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(?bool $active): static
+    {
+        $this->active = $active;
 
         return $this;
     }

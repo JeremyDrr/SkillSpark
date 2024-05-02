@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <title>SkillSpark Admin &bull; {% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+
+<body class="bg-dark-subtle">
+{% include 'admin/partials/header.html.twig' %}
+
+{% block body %}{% endblock %}
+
+{% include 'admin/partials/footer.html.twig' %}
+
+<script src="/assets/js/bootstrap.min.js"></script>
+{% block javascripts %}{% endblock %}
+</body>
+</html>

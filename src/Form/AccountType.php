@@ -36,6 +36,11 @@ class AccountType extends ApplicationType
                     'class' => 'form-control mb-3'
                 ]
             ]))
+            ->add('introduction', TextType::class, $this->getConfiguration('Introduction', '', [
+                'attr' => [
+                    'class' => 'form-control mb-3'
+                ]
+            ]))
         ;
     }
 

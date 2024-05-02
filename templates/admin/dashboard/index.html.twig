@@ -1,0 +1,175 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+
+    <div class="container-fluid">
+
+        <h1 class="display-4 mt-5 my-2 text-center">Dashboard</h1>
+        <p class="text-center lead mb-5">SkillSpark's central hub for gaining insights and managing the site.
+            The dashboard provides a quick view of key metrics, recent activity, and essential actions, allowing to monitor performance and make informed decisions at a glance.</p>
+
+        <div class="row">
+
+            <div class="col">
+                <div class="card bg-primary text-white mb-3 text-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <p class="display-4">👨🏻</p>
+                            </div>
+                            <div class="col-8 d-flex justify-content-center align-items-center">
+                                <h4 class="card-title">{{ stats.users }} Users</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card text-white bg-success mb-3 text-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <p class="display-4">📗</p>
+                            </div>
+                            <div class="col-8 d-flex justify-content-center align-items-center">
+                                <h4 class="card-title">{{ stats.activecourses }} Active Courses</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card text-white bg-secondary-subtle mb-3 text-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <p class="display-4">📚</p>
+                            </div>
+                            <div class="col-8 d-flex justify-content-center align-items-center">
+                                <h4 class="card-title">{{ stats.courses }} Courses Created</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card text-white bg-warning mb-3 text-center">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <p class="display-4">💲</p>
+                            </div>
+                            <div class="col-8 d-flex justify-content-center align-items-center">
+                                <h4 class="card-title">- Purchases</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <hr class="m-5">
+
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-success">
+                    <h2 class="alert-heading my-3">📈 Most popular courses</h2>
+
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Instructor</th>
+                            <th>Learners</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {#
+                        {% for course in bestArticles %}
+                            <tr>
+                                <td>{{course.title}}</td>
+                                <td>
+                                    <img src="{{course.picture}}" alt="" class="avatar avatar-micro"> {{course.firstName}} {{course.lastName}}
+                                </td>
+                                <td>
+                                    {{ course.views }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        #}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col">
+                <div class="alert alert-danger">
+                    <h2 class="alert-heading my-3">📉 Least popular courses</h2>
+
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Instructor</th>
+                            <th>Learners</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {#
+                        {% for article in worstArticles %}
+                            <tr>
+                                <td>{{article.title}}</td>
+                                <td>
+                                    <img src="{{article.picture}}" alt="" class="avatar avatar-micro"> {{article.firstName}} {{article.lastName}}
+                                </td>
+                                <td>
+                                    {{ article.views }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        #}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <hr class="m-5">
+        <div class="row text-center">
+            <div class="col">
+                <h1 class="display-6">Categories Share</h1>
+                <canvas id="categories" class="mt-5"></canvas>
+            </div>
+            <div class="col">
+                <h1 class="display-6">Signups Chart</h1>
+            </div>
+            <div class="col">
+                <h1 class="display-6">Purchases Chart</h1>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2/dist/chart.min.js" integrity="sha256-qoN08nWXsFH+S9CtIq99e5yzYHioRHtNB9t2qy1MSmc=" crossorigin="anonymous"></script>
+    <script>
+        let categories = document.querySelector("#categories")
+        let categGraph = new Chart(categories, {
+            type: "pie",
+            data: {
+                labels: {# {{ catName|raw }} #} ,
+                datasets: [{
+                    label: "Categories share",
+                    data: {# {{ catCount|raw }} #},
+                    backgroundColor: {# {{ catColour|raw }} #}
+                #}]
+            },
+        }).resize(50, 50);
+    </script>
+{% endblock %}

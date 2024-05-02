@@ -2,6 +2,8 @@
 
 {% block title %}Create a course{% endblock %}
 
+{% form_theme form 'course/_collection.html.twig' %}
+
 {% block body %}
 
     <div class="container">
@@ -46,9 +48,13 @@
                             {{ form_widget(form.level) }}
                         </div>
 
+                        {{ form_row(form.chapters) }}
+
+
+
                         <div class="text-center">
-                            <button type="submit" class="btn mybtn btn-secondary my-3">
-                                Create a course
+                            <button type="submit" class="btn btn-success my-3">
+                                Create course ✅
                             </button>
                         </div>
 
@@ -59,4 +65,9 @@
         </div>
     </div>
 
+{% endblock %}
+
+
+{% block javascripts %}
+    <script src="/assets/js/course.js"></script>
 {% endblock %}

@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Chapter;
 use App\Entity\Course;
 use App\Entity\Level;
 use App\Entity\Role;
@@ -51,14 +52,16 @@ class AppFixtures extends Fixture
         $admin->setFirstName("Jeremy")
             ->setLastName("Durrieu")
             ->setEmail("jeremy@skillspark.com")
-            ->setPicture("https://randomuser.me/api/portraits/men/52.jpg")
+            ->setPicture("https://avatars.githubusercontent.com/u/57372428?v=4")
+            ->setIntroduction('Hey, I\'m the founder of SkillSpark! Never stop learning')
             ->setPassword($this->encoder->hashPassword($admin, 'password'))
-            ->addRole($adminRole);
+            ->addRole($adminRole)
+            ->setVerified(true);
         $manager->persist($admin);
 
         // Handle users
         $users = [];
-        for($i = 1; $i <= 50; $i++){
+        for($i = 1; $i <= 20; $i++){
             $user = new User();
             $gender = $faker->randomElement(['male', 'female']);
             $picture = 'https://randomuser.me/api/portraits/';
@@ -68,20 +71,34 @@ class AppFixtures extends Fixture
                 ->setLastName($faker->lastName)
                 ->setEmail($faker->unique()->email)
                 ->setPassword($this->encoder->hashPassword($user, 'password'))
-                ->setPicture($picture);
+                ->setPicture($picture)
+                ->setIntroduction($faker->paragraph(5))
+                ->setVerified($faker->boolean);
             $manager->persist($user);
             $users[] = $user;
         }
 
         // Handle courses
-        for($i = 0; $i < 20; $i++){
+        for($i = 0; $i < 10; $i++){
             $course = new Course();
-            $course->setTitle($faker->realTextBetween(5, 20))
+            $course->setTitle($faker->sentence)
                 ->setIntroduction($faker->realText)
                 ->setInstructor($users[mt_rand(0, count($users) -1)])
-                ->setThumbnail('https://place-hold.it/200x100')
-                ->setPrice($faker->randomFloat(2, 1, 2000))
+                ->setThumbnail('https://picsum.photos/210/118?random=' . mt_rand(1, 55000))
+                ->setPrice($faker->randomFloat(2, 1, 500))
+                ->setActive(true)
                 ->setLevel($levels[mt_rand(0, count($levels) -1)]);
+
+            // Handle chapters
+            for($j = 1; $j <= $faker->numberBetween(1, 15); $j++){
+                $chapter = new Chapter();
+                $chapter->setCourse($course)
+                    ->setTitle($faker->sentence)
+                    ->setContent($faker->paragraph);
+                $course->addChapter($chapter);
+                $manager->persist($chapter);
+            }
+
             $manager->persist($course);
         }
 
