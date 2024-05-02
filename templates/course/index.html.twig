@@ -49,13 +49,19 @@
 
     <div class="container" id="courses">
         <div class="row my-5">
-            {% for course in repository %}
+            {% for course in pagination.data|sort %}
 
                 {% if course.active %}
                     {% include 'course/_card.html.twig' %}
                 {% endif %}
 
             {% endfor %}
+
+
+
+                {{ pagination.display }}
+
+
         </div>
     </div>
 

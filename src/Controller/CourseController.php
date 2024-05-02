@@ -8,7 +8,8 @@ use App\Form\CourseEditType;
 use App\Form\CourseType;
 use App\Form\SignupType;
 use App\Repository\CourseRepository;
-use App\Services\StripeService;
+use App\Service\PaginationService;
+use App\Service\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Exception\ApiErrorException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,14 +23,20 @@ class CourseController extends AbstractController
 {
     /**
      * @param CourseRepository $courseRepository
+     * @param $page
+     * @param PaginationService $paginationService
      * @return Response
      */
-    #[Route('/courses', name: 'courses_index')]
-    public function index(CourseRepository $courseRepository): Response
+    #[Route('/courses/{page<\d+>?1}', name: 'courses_index')]
+    public function index(CourseRepository $courseRepository, $page, PaginationService $paginationService): Response
     {
 
+        $paginationService->setEntityClass(Course::class)
+            ->setPage($page)
+            ->setLimit(18);
+
         return $this->render('course/index.html.twig', [
-            'repository' => $courseRepository->findAll(),
+            'pagination' => $paginationService,
         ]);
     }
 

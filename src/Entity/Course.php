@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CourseRepository;
-use App\Services\StripeService;
+use App\Service\StripeService;
 use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

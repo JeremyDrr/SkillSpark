@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Services\StatsService;
+use App\Service\StatsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
