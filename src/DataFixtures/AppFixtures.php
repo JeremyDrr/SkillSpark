@@ -63,6 +63,7 @@ class AppFixtures extends Fixture
         $users = [];
         for($i = 1; $i <= 20; $i++){
             $user = new User();
+
             $gender = $faker->randomElement(['male', 'female']);
             $picture = 'https://randomuser.me/api/portraits/';
             $pictureID = $faker->biasedNumberBetween(1, 99) . '.jpg';
@@ -74,11 +75,15 @@ class AppFixtures extends Fixture
                 ->setPicture($picture)
                 ->setIntroduction($faker->paragraph(5))
                 ->setVerified($faker->boolean);
+
+
+
             $manager->persist($user);
             $users[] = $user;
         }
 
         // Handle courses
+        $courses = [];
         for($i = 0; $i < 10; $i++){
             $course = new Course();
             $course->setTitle($faker->sentence)
@@ -97,8 +102,16 @@ class AppFixtures extends Fixture
                     ->setContent($faker->paragraph);
                 $course->addChapter($chapter);
                 $manager->persist($chapter);
+
             }
 
+            // Handle students
+            for($k = 0; $k <= $faker->numberBetween(0, 5); $k++){
+                $course->addStudent($faker->randomElement($users));
+            }
+
+
+            $courses = $course;
             $manager->persist($course);
         }
 

@@ -16,8 +16,13 @@ class AdminDashboardController extends AbstractController
 
         $stats = $service->getStats();
 
+        $bestCourses = $service->getCoursesStats('DESC');
+        $worstCourses = $service->getCoursesStats('ASC');
+
         return $this->render('admin/dashboard/index.html.twig', [
             'stats'     => $stats,
+            'bestCourses' => $bestCourses,
+            'worstCourses' => $worstCourses,
         ]);
     }
 }

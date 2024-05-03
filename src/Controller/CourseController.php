@@ -9,6 +9,7 @@ use App\Form\CourseType;
 use App\Form\SignupType;
 use App\Repository\CourseRepository;
 use App\Service\PaginationService;
+use App\Service\StatsService;
 use App\Service\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Exception\ApiErrorException;
@@ -28,8 +29,10 @@ class CourseController extends AbstractController
      * @return Response
      */
     #[Route('/courses/{page<\d+>?1}', name: 'courses_index')]
-    public function index(CourseRepository $courseRepository, $page, PaginationService $paginationService): Response
+    public function index($page, PaginationService $paginationService, StatsService $statsService): Response
     {
+
+        $trendingCourses = $statsService->getAmountCourse('DESC', 3);
 
         $paginationService->setEntityClass(Course::class)
             ->setPage($page)
@@ -37,6 +40,7 @@ class CourseController extends AbstractController
 
         return $this->render('course/index.html.twig', [
             'pagination' => $paginationService,
+            'trendingCourses' => $trendingCourses,
         ]);
     }
 

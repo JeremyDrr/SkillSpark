@@ -65,7 +65,7 @@
                                 <p class="display-4">💲</p>
                             </div>
                             <div class="col-8 d-flex justify-content-center align-items-center">
-                                <h4 class="card-title">- Purchases</h4>
+                                <h4 class="card-title">{{ stats.purchasesCount}} Purchases</h4>
                             </div>
                         </div>
                     </div>
@@ -87,23 +87,23 @@
                         <tr>
                             <th>Course</th>
                             <th>Instructor</th>
-                            <th>Learners</th>
+                            <th>Students</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {#
-                        {% for course in bestArticles %}
+
+                        {% for course in bestCourses %}
                             <tr>
                                 <td>{{course.title}}</td>
                                 <td>
-                                    <img src="{{course.picture}}" alt="" class="avatar avatar-micro"> {{course.firstName}} {{course.lastName}}
+                                    <a href="{{ path('user_show', {'slug':  course.slug  }) }}"><img src="{{course.picture}}" alt="" class="avatar avatar-micro"> {{course.firstName}} {{course.lastName}}</a>
                                 </td>
                                 <td>
-                                    {{ course.views }}
+                                   {{ course.students }}
                                 </td>
                             </tr>
                         {% endfor %}
-                        #}
+
                         </tbody>
                     </table>
                 </div>
@@ -117,23 +117,23 @@
                         <tr>
                             <th>Course</th>
                             <th>Instructor</th>
-                            <th>Learners</th>
+                            <th>Students</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {#
-                        {% for article in worstArticles %}
+
+                        {% for course in worstCourses %}
                             <tr>
-                                <td>{{article.title}}</td>
+                                <td>{{course.title}}</td>
                                 <td>
-                                    <img src="{{article.picture}}" alt="" class="avatar avatar-micro"> {{article.firstName}} {{article.lastName}}
+                                    <img src="{{course.picture}}" alt="" class="avatar avatar-micro"> {{course.firstName}} {{course.lastName}}
                                 </td>
                                 <td>
-                                    {{ article.views }}
+                                    {{ course.students }}
                                 </td>
                             </tr>
                         {% endfor %}
-                        #}
+
                         </tbody>
                     </table>
                 </div>

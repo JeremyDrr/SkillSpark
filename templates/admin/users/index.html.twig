@@ -24,7 +24,9 @@
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Roles</th>
-                <th>Courses</th>
+                <th>Verified</th>
+                <th>Courses Created</th>
+                <th>Courses Followed</th>
                 <th>Actions</th>
                 <th>Moderation</th>
             </tr>
@@ -50,7 +52,18 @@
                         {% endfor %}
                     </td>
                     <td>
+                        {% if user.verified %}
+                            ✅
+                        {% else %}
+                            ❌
+                        {% endif %}
+                    </td>
+                    <td>
                         {{ user.courses | length }}
+                    </td>
+
+                    <td>
+                        {{ user.coursesFollowed | length }}
                     </td>
                     <td>
                         <a href="" class="btn btn-outline-success">✒️</a>

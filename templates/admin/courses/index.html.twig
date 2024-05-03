@@ -15,6 +15,7 @@
                 <th>Id</th>
                 <th>Title</th>
                 <th>Chapters</th>
+                <th>Students</th>
                 <th>Price</th>
                 <th>Instructor</th>
                 <th>Actions</th>
@@ -27,13 +28,13 @@
                     <td>{{course.id}}</td>
                     <td>{{course.title}}</td>
                     <td>{{course.chapters | length}}</td>
+                    <td>{{ course.students|length }}</td>
                     <td>{{course.price}} €</td>
                     <td>
                         <a href="">
                             <img src="{{course.instructor.picture}}" alt="{{course.instructor.fullName}}" class="avatar avatar-micro mr-2">
                             {{course.instructor.fullName}} </a>
                     </td>
-
                     <td>
                         <a href="" class="btn btn-outline-success">✒️</a>
                         <a href="" class="btn btn-outline-danger">🗑️</a>

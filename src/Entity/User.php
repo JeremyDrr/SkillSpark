@@ -63,10 +63,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?bool $verified = null;
 
+    #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'students')]
+    private Collection $coursesFollowed;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
         $this->courses = new ArrayCollection();
+        $this->coursesFollowed = new ArrayCollection();
     }
 
     /**
@@ -274,6 +278,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerified(?bool $verified): static
     {
         $this->verified = $verified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Course>
+     */
+    public function getCoursesFollowed(): Collection
+    {
+        return $this->coursesFollowed;
+    }
+
+    public function addCoursesFollowed(Course $coursesFollowed): static
+    {
+        if (!$this->coursesFollowed->contains($coursesFollowed)) {
+            $this->coursesFollowed->add($coursesFollowed);
+        }
+
+        return $this;
+    }
+
+    public function removeCoursesFollowed(Course $coursesFollowed): static
+    {
+        $this->coursesFollowed->removeElement($coursesFollowed);
 
         return $this;
     }

@@ -56,9 +56,13 @@ class Course
     #[ORM\Column(nullable: true)]
     private ?bool $active = null;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'coursesFollowed')]
+    private Collection $students;
+
     public function __construct()
     {
         $this->chapters = new ArrayCollection();
+        $this->students = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -234,6 +238,33 @@ class Course
     public function setActive(?bool $active): static
     {
         $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getStudents(): Collection
+    {
+        return $this->students;
+    }
+
+    public function addStudent(User $student): static
+    {
+        if (!$this->students->contains($student)) {
+            $this->students->add($student);
+            $student->addCoursesFollowed($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStudent(User $student): static
+    {
+        if ($this->students->removeElement($student)) {
+            $student->removeCoursesFollowed($this);
+        }
 
         return $this;
     }

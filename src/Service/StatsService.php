@@ -24,8 +24,9 @@ class StatsService
         $users      = $this->getUsersCount();
         $courses   = $this->getCoursesCount();
         $activecourses = $this->getActiveCoursesCount();
+        $purchasesCount = $this->getPurchasesCount();
 
-        return compact('users', 'courses', 'activecourses');
+        return compact('users', 'courses', 'activecourses', 'purchasesCount');
     }
 
     public function getUsersCount() {
@@ -44,6 +45,41 @@ class StatsService
                 $amount++;
         }
         return $amount;
+    }
+
+    public function getPurchasesCount(){
+        $courses = $this->manager->getRepository(Course::class)->findAll();
+        $amount = 0;
+        foreach($courses as $course){
+            $amount += $course->getStudents()->count();
+        }
+        return $amount;
+    }
+
+    public function getCoursesStats($direction) {
+        return $this->manager->createQuery(
+            'SELECT COUNT(s.id) as students, c.title, c.id, u.firstName, u.lastName, u.picture, u.slug
+                FROM App\Entity\Course c
+                JOIN c.instructor u 
+                JOIN c.students s
+                GROUP BY c.id
+                ORDER BY students ' . $direction
+        )
+            ->setMaxResults(5)
+            ->getResult();
+    }
+
+    public function getAmountCourse($direction, $amount) {
+        return $this->manager->createQuery(
+            'SELECT COUNT(s.id) as students, c.title, c.introduction, c.thumbnail, u.id, u.firstName, u.lastName, u.picture, u.slug
+                FROM App\Entity\Course c
+                JOIN c.instructor u 
+                JOIN c.students s
+                GROUP BY c.id
+                ORDER BY students ' . $direction
+        )
+            ->setMaxResults($amount)
+            ->getResult();
     }
 
 

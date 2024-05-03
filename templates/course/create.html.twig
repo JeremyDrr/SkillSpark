@@ -1,73 +1,88 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Create a course{% endblock %}
+{% block title %}Create course{% endblock %}
 
-{% form_theme form 'course/_collection.html.twig' %}
+{% form_theme form '/course/_collection.html.twig' %}
 
 {% block body %}
-
     <div class="container">
+        <h1 class="my-5">Create course 🖊️</h1>
 
-        <div class="row my-5 py-5">
-            <div class="row">
-                <div class="col-10 offset-1">
-                    <div class="alert bg-transparent border-light py-3 px-3">
-                        <h1 class="text-center">Create a course</h1>
-                        <hr>
-                        {% for child in form.children %}
-                            {% for error in child.vars.errors %}
-                                <div class="bg-danger ps-2 py-2 pe-2">
-                                    {{ error.message }} <br>
-                                </div>
-                            {% endfor %}
-                        {% endfor %}
-                        {{ form_start(form) }}
+        {{ form_start(form) }}
 
-                        <div class="mb-3">
-                            <div class="form-label">{{ form_label(form.title) }}</div>
-                            {{ form_widget(form.title) }}
-                        </div>
+        {% if not form.vars.valid %}
+            <div class="alert alert-danger">
+                {% for child in form.children %}
+                    {% for error in child.vars.errors %}
+                        {{ error.message }} <br>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
 
-                        <div class="mb-3">
-                            <div class="form-label">{{ form_label(form.introduction) }}</div>
-                            {{ form_widget(form.introduction) }}
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="form-label">{{ form_label(form.price) }}</div>
-                            {{ form_widget(form.price) }}
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="form-label">{{ form_label(form.thumbnail) }}</div>
-                            {{ form_widget(form.thumbnail) }}
-                        </div>
-
-                        <div class="mb-3">
-                            <div class="form-label">{{ form_label(form.level) }}</div>
-                            {{ form_widget(form.level) }}
-                        </div>
-
-                        {{ form_row(form.chapters) }}
-
-
-
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success my-3">
-                                Create course ✅
-                            </button>
-                        </div>
-
-                        {{ form_end(form) }}
+        <div class="row">
+            <div class="col-6">
+                <div class="alert bg-transparent border-light">
+                    <h2 class="alert-heading">Basic Information</h2>
+                    <hr>
+                    <div class="form-group">
+                        {{ form_label(form.title) }}
+                        {{ form_widget(form.title) }}
                     </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.introduction) }}
+                        {{ form_widget(form.introduction) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.price) }}
+                        {{ form_widget(form.price) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.level) }}
+                        {{ form_widget(form.level) }}
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="alert bg-transparent border-light">
+                    <h2 class="alert-heading">Details</h2>
+                    <hr>
+                    <div class="form-group">
+                        {{ form_label(form.thumbnail) }}
+                        {{ form_widget(form.thumbnail) }}
+                    </div>
+
+                    <div class="form-group mb-5">
+                        {{ form_label(form.active) }}
+                        {{ form_widget(form.active) }}
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Save ✅</button>
+
                 </div>
             </div>
         </div>
-    </div>
 
+        <div class="row">
+
+            {{ form_start(form) }}
+
+            {{ form_widget(form) }}
+
+            {{ form_end(form) }}
+
+        </div>
+
+    </div>
 {% endblock %}
 
-
 {% block javascripts %}
+
     <script src="/assets/js/course.js"></script>
+
 {% endblock %}
