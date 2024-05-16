@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Course;
 use App\Entity\Level;
 use App\Entity\User;
@@ -9,10 +10,12 @@ use Doctrine\DBAL\Types\FloatType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -31,10 +34,10 @@ class CourseType extends ApplicationType
                     'class' => 'form-control mb-3'
                 ]
             ]))
-            ->add('thumbnail', TextType::class, $this->getConfiguration('Thumbnail', '', [
+            ->add('thumbnail', UrlType::class, $this->getConfiguration('Thumbnail', '', [
                 'attr' => [
                     'class' => 'form-control mb-3'
-                ]
+                ],
             ]))
             ->add('price', MoneyType::class, $this->getConfiguration('Price', '', [
                 'attr' => [
@@ -49,12 +52,6 @@ class CourseType extends ApplicationType
                     'class' => 'form-control mb-3'
                 ]
             ])
-            ->add('active', CheckboxType::class, $this->getConfiguration('Active', '', [
-                'attr' => [
-                    'class' => 'form-check mb-3'
-                ],
-                'required' => false
-            ]))
             ->add('chapters', CollectionType::class, $this->getConfiguration('', '', [
                 'attr' => [
                     'class' => 'mb-3'
@@ -67,6 +64,22 @@ class CourseType extends ApplicationType
                     'label' => false,
                 ],
             ]))
+            ->add('category', EntityType::class, $this->getConfiguration('', '', [
+                'attr' => [
+                    'class' => 'form-control mb-3'
+                ],
+                'class' => Category::class,
+                'required' => true,
+                'choice_label' => 'name',
+
+            ]))
+            ->add('active', CheckboxType::class, $this->getConfiguration('Active', '', [
+                'attr' => [
+                    'class' => 'form-check mb-3'
+                ],
+                'required' => false
+            ]))
+
         ;
     }
 

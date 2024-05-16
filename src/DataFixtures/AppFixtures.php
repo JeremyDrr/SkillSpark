@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Category;
 use App\Entity\Chapter;
 use App\Entity\Course;
 use App\Entity\Level;
@@ -82,6 +83,17 @@ class AppFixtures extends Fixture
             $users[] = $user;
         }
 
+        // Handle categories
+        $categoryList = ['Coding', 'Cooking', 'Gardening', 'Music', 'Art & Design', 'Writing', 'Fitness & Health', 'Languages'];
+        $categories = [];
+        foreach ($categoryList as $categoryItem){
+            $category = new Category();
+            $category->setName($categoryItem)
+                ->setColour($faker->hexColor);
+            $categories[] = $category;
+            $manager->persist($category);
+        }
+
         // Handle courses
         $courses = [];
         for($i = 0; $i < 10; $i++){
@@ -92,7 +104,8 @@ class AppFixtures extends Fixture
                 ->setThumbnail('https://picsum.photos/210/118?random=' . mt_rand(1, 55000))
                 ->setPrice($faker->randomFloat(2, 1, 500))
                 ->setActive(true)
-                ->setLevel($levels[mt_rand(0, count($levels) -1)]);
+                ->setLevel($levels[mt_rand(0, count($levels) -1)])
+                ->setCategory($faker->randomElement($categories));
 
             // Handle chapters
             for($j = 1; $j <= $faker->numberBetween(1, 15); $j++){

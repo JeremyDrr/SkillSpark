@@ -71,7 +71,7 @@ class StatsService
 
     public function getAmountCourse($direction, $amount) {
         return $this->manager->createQuery(
-            'SELECT COUNT(s.id) as students, c.title, c.introduction, c.thumbnail, u.id, u.firstName, u.lastName, u.picture, u.slug
+            'SELECT COUNT(s.id) as students, c.title, c.slug, c.introduction, c.thumbnail, u.id, u.firstName, u.lastName, u.picture, u.slug
                 FROM App\Entity\Course c
                 JOIN c.instructor u 
                 JOIN c.students s

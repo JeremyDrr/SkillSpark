@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Exception\ApiErrorException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\MakerBundle\Str;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -64,14 +65,7 @@ class CourseController extends AbstractController
                 $manager->persist($chapter);
             }
 
-            $stripeService = new StripeService();
-            $stripeProduct = $stripeService->createProduct($course);
-            $course->setStripeProductId($stripeProduct->id);
-            $stripePrice = $stripeService->createPrice($course);
-            $course->setStripePriceId($stripePrice->id);
-
             $course->setInstructor($this->getUser());
-
 
             $manager->persist($course);
             $manager->flush();
@@ -114,8 +108,16 @@ class CourseController extends AbstractController
         return $this->redirectToRoute('courses_index');
     }
 
+    /**
+     * @param Request $request
+     * @param Course $course
+     * @param EntityManagerInterface $manager
+     * @return RedirectResponse|Response
+     * @throws ApiErrorException
+     */
     #[Route('/course/{slug}/edit', name: 'course_edit')]
-    public function edit(Request $request, Course $course, EntityManagerInterface $manager){
+    public function edit(Request $request, Course $course, EntityManagerInterface $manager): RedirectResponse|Response
+    {
 
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
@@ -126,6 +128,11 @@ class CourseController extends AbstractController
                 $chapter->setCourse($course);
                 $manager->persist($chapter);
             }
+
+            $stripeService = new StripeService();
+
+            $stripeProduct = $stripeService->updatePrice($course);
+            $course->setStripePriceId($stripeProduct);
 
             $manager->persist($course);
             $manager->flush();

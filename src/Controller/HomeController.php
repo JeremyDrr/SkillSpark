@@ -11,6 +11,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     /**
+     * @param CourseRepository $courseRepository
+     * @param StatsService $statsService
      * @return Response
      */
     #[Route('/', name: 'homepage')]

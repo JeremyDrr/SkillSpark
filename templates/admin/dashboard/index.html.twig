@@ -141,16 +141,11 @@
         </div>
         <hr class="m-5">
         <div class="row text-center">
-            <div class="col">
+            <div class="col-3 mx-auto" >
                 <h1 class="display-6">Categories Share</h1>
                 <canvas id="categories" class="mt-5"></canvas>
             </div>
-            <div class="col">
-                <h1 class="display-6">Signups Chart</h1>
-            </div>
-            <div class="col">
-                <h1 class="display-6">Purchases Chart</h1>
-            </div>
+
         </div>
     </div>
 
@@ -163,13 +158,13 @@
         let categGraph = new Chart(categories, {
             type: "pie",
             data: {
-                labels: {# {{ catName|raw }} #} ,
+                labels: {{ catName|raw }},
                 datasets: [{
                     label: "Categories share",
-                    data: {# {{ catCount|raw }} #},
-                    backgroundColor: {# {{ catColour|raw }} #}
-                #}]
+                    data: {{ catCount|raw }},
+                    backgroundColor: {{ catColour|raw }}
+                }]
             },
-        }).resize(50, 50);
+        }).resize(75, 75);
     </script>
 {% endblock %}

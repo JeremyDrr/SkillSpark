@@ -12,6 +12,9 @@
                 {% if not course.active %}
                     <small class="badge text-bg-warning me-auto card-header-pills">Not published</small>
                 {% endif %}
+
+                    <small class="badge text-bg-info me-auto card-header-pills">{{ course.category.name }}</small>
+
             </div>
             <p class="card-text text-white-50">{{ course.introduction }}</p>
             <ul class="list-group list-group-flush">

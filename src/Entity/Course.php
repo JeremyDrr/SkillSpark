@@ -8,7 +8,9 @@ use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Stripe\Exception\ApiErrorException;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Bundle\MakerBundle\Str;
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
@@ -59,26 +61,35 @@ class Course
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'coursesFollowed')]
     private Collection $students;
 
+    #[ORM\ManyToOne(inversedBy: 'Courses')]
+    private ?Category $category = null;
+
+
     public function __construct()
     {
         $this->chapters = new ArrayCollection();
         $this->students = new ArrayCollection();
+
     }
 
+    /**
+     * @throws ApiErrorException
+     */
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function PrePersist(): void
     {
 
         if(empty($this->stripeProductId)){
-            $stripeService = new StripeService();
 
+            $stripeService = new StripeService();
             $stripeProduct = $stripeService->createProduct($this);
             $this->setStripeProductId($stripeProduct->id);
 
             $stripePrice = $stripeService->createPrice($this);
             $this->setStripePriceId($stripePrice->id);
         }
+
 
         if(empty($this->slug)){
             $slugify = new Slugify();
@@ -268,4 +279,18 @@ class Course
 
         return $this;
     }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+
 }

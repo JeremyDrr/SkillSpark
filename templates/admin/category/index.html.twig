@@ -1,0 +1,45 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Categories{% endblock %}
+
+{% block body %}
+
+    <div class="container-fluid">
+        <h1 class="display-4 mt-5 my-2 text-center">Categories Management</h1>
+        <p class="lead text-center">This section offers comprehensive category management for SkillSpark. Create, edit, and organize categories to ensure the platform is well-structured and easy to navigate.</p>
+        <a href="{{ path('admin_categories_create') }}" class="btn btn-outline-success mb-5">➕ Create a category</a>
+
+        <table class="table table-hover border border-light">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Colour</th>
+                <th>Linked Courses</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for category in categories %}
+                <tr>
+                    <td>{{category.id}}</td>
+                    <td>{{category.name}}</td>
+                    <td>
+                        <button type="button" style="background-color: {{ category.colour }}" class="btn py-2 px-2 ms-3">
+
+                        </button>
+                    </td>
+                    <td>{{ category.courses|length }}</td>
+                    <td>
+                        <a href="" class="btn btn-outline-success">✒️</a>
+                        <a href="" class="btn btn-outline-danger">🗑️</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}

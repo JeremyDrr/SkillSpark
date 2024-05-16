@@ -56,7 +56,7 @@
     <!-- Courses Section -->
     <div class="container mt-5" id="courses">
         <h2 class="text-center mb-4">Featured Courses</h2>
-        <!-- Add your course cards here -->
+
         <div class="row">
 
             {% for trendingCourse in trendingCourses %}
@@ -75,9 +75,9 @@
                                                     src="{{ trendingCourse.picture }}" alt="{{ trendingCourse.picture }}'s avatar" class="avatar avatar-mini mx-2"></span></li>
 
                                     {% if app.user == course.instructor or is_granted('ROLE_ADMIN') or app.user in course.students %}
-                                        <a href="{{ path('course_show', {'slug': trendingCourse.slug}) }}" class="btn btn-success mt-3">Access 👀</a>
+                                        <a href="{{ path('course_show', {'slug': course.slug}) }}" class="btn btn-success mt-3">Access 👀</a>
                                     {% else %}
-                                        <a href="{{ path('cart_add', {'slug': trendingCourse.slug}) }}" class="btn btn-outline-success mt-3">Entroll Now 🛒</a>
+                                        <a href="{{ path('cart_add', {'slug': course.slug}) }}" class="btn btn-outline-success mt-3">Entroll Now 🛒</a>
                                     {% endif %}
 
                                 </div>

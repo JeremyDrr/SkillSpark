@@ -4,8 +4,8 @@
 
     <input type="hidden" id="widgets-counter" value="0">
 
-    <div class="form-group">
-        <button type="button" id="add-chapter" class="btn btn-primary">➕ Add a chapter</button>
+    <div class="form-group text-center">
+        <button type="button" id="add-chapter" class="btn btn-outline-primary">Add a chapter ➕</button>
     </div>
 {% endblock %}
 
@@ -17,7 +17,7 @@
     <div class="form-group" id="block_{{id}}">
         {{ form_errors(form) }}
         <div class="row">
-            <div class="col-10">
+            <div class="col-11">
                 <div class="row">
                     <div class="col">
                         {{ form_widget(form.title) }}
@@ -29,8 +29,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-2">
-                <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger">X</button>
+            <div class="col-1 text-center">
+                <button type="button" data-action="delete" data-target="#block_{{id}}" class="btn btn-danger mx-auto">X</button>
             </div>
         </div>
     </div>

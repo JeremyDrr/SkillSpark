@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Course;
 use App\Entity\Level;
 use App\Entity\User;
@@ -14,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -32,7 +34,7 @@ class CourseEditType extends ApplicationType
                     'class' => 'form-control mb-3'
                 ]
             ]))
-            ->add('thumbnail', TextType::class, $this->getConfiguration('Thumbnail', '', [
+            ->add('thumbnail', UrlType::class, $this->getConfiguration('Thumbnail', '', [
                 'attr' => [
                     'class' => 'form-control mb-3'
                 ]
@@ -45,7 +47,7 @@ class CourseEditType extends ApplicationType
             ]))
             ->add('level', EntityType::class, [
                 'class' => Level::class,
-'choice_label' => 'name',
+                'choice_label' => 'name',
                 'attr' => [
                     'class' => 'form-control mb-3'
                 ]
@@ -68,6 +70,13 @@ class CourseEditType extends ApplicationType
                     'label' => false,
                 ],
             ]))
+            ->add('categories', EntityType::class, [
+                'class' => Level::class,
+                'choice_label' => 'name',
+                'attr' => [
+                    'class' => 'form-control mb-3'
+                ]
+            ])
         ;
     }
 

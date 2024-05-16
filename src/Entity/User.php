@@ -7,6 +7,7 @@ use Cocur\Slugify\Slugify;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -66,6 +67,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'students')]
     private Collection $coursesFollowed;
 
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $warnings = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $banned = null;
+
     public function __construct()
     {
         $this->roles = new ArrayCollection();
@@ -92,6 +99,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $slugify = new Slugify();
             $this->slug = $slugify->slugify($this->firstName.' '.$this->lastName);
         }
+
+        if(empty($this->warnings))
+            $this->warnings = 0;
+        if(empty($this->banned))
+            $this->banned = false;
     }
 
     public function getId(): ?int
@@ -302,6 +314,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCoursesFollowed(Course $coursesFollowed): static
     {
         $this->coursesFollowed->removeElement($coursesFollowed);
+
+        return $this;
+    }
+
+    public function getWarnings(): ?int
+    {
+        return $this->warnings;
+    }
+
+    public function setWarnings(?int $warnings): static
+    {
+        $this->warnings = $warnings;
+
+        return $this;
+    }
+
+    public function isBanned(): ?bool
+    {
+        return $this->banned;
+    }
+
+    public function setBanned(?bool $banned): static
+    {
+        $this->banned = $banned;
 
         return $this;
     }

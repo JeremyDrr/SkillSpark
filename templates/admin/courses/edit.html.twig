@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/base.html.twig' %}
 
 {% block title %}Edit course{% endblock %}
 
@@ -75,19 +75,23 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="alert b bg-transparent border-light">
+            <div class="row">
+                <h2 class="alert-heading">Chapters</h2>
+                <hr class="mb-4">
+                <div class="col-12">
 
-            <div class="alert border-light">
-                {{ form_start(form) }}
+                    {{ form_start(form) }}
 
-                {{ form_widget(form) }}
+                    {{ form_widget(form.chapters) }}
 
-                {{ form_end(form) }}
+                    {{ form_end(form) }}
+
+                </div>
+
             </div>
-
-
-
         </div>
+
 
     </div>
 {% endblock %}

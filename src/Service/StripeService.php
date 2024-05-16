@@ -27,7 +27,42 @@ class StripeService
     {
         return $this->getStripe()->products->create([
             'name' => $course->getTitle(),
-            'description' => $course->getIntroduction()
+            'description' => $course->getIntroduction(),
+            'images' => [$course->getThumbnail()],
+            'active' => $course->isActive()
+
+        ]);
+    }
+
+    /**
+     * @param Course $course
+     * @return Product
+     * @throws ApiErrorException
+     */
+    public function updateProduct(Course $course): Product
+    {
+
+        $productData = [
+            'name' => $course->getTitle(),
+            'description' => $course->getIntroduction(),
+            'currencies' => ['eur'], // Assuming price is in Romanian Leu (RON)
+            'price_data' => [
+                'currency' => 'eur',
+                'unit_amount' => $course->getPrice() * 100, // Stripe prices are in cents
+                'product_data' => [
+                    'name' => $course->getTitle(),
+                    'description' => $course->getIntroduction(),
+                ],
+            ],
+        ];
+
+
+        return $this->getStripe()->products->update($course->getStripePriceId(), [
+            'name' => $course->getTitle(),
+            'description' => $course->getIntroduction(),
+            'images' => [$course->getThumbnail()],
+            'active' => $course->isActive()
+
         ]);
     }
 
@@ -41,8 +76,35 @@ class StripeService
         return $this->getStripe()->prices->create([
             'unit_amount' => $course->getPrice()*100,
             'currency' => 'eur',
-            'product' => $course->getStripeProductId()
+            'product' => $course->getStripeProductId(),
+
         ]);
     }
+
+    /**
+     * @param Course $course
+     * @return Price
+     * @throws ApiErrorException
+     */
+    public function updatePrice(Course $course): Price
+    {
+        $stripe = $this->getStripe();
+        $newPrice = $stripe->prices->create([
+            'product' => $course->getStripeProductId(),
+            'unit_amount' => $course->getPrice() * 100, // Convert to cents
+            'currency' => 'eur', // Assuming course has currency info
+            'active' => $course->isActive(),
+        ]);
+
+        // Deactivate the old price (optional)
+        $stripe->prices->update($course->getStripePriceId(), ['active' => false]);
+
+        // Update course with new price ID (optional)
+        $course->setStripePriceId($newPrice->id);
+
+
+        return $newPrice;
+    }
+
 
 }
