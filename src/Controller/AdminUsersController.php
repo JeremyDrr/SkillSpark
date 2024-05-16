@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\AccountType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -17,6 +19,27 @@ class AdminUsersController extends AbstractController
     {
         return $this->render('admin/users/index.html.twig', [
             'users' => $repository->findAll(),
+        ]);
+    }
+
+    #[Route('/admin/user/{slug}/edit', name: 'admin_users_edit')]
+    public function edit(User $user, Request $request, EntityManagerInterface $manager): Response
+    {
+
+        $form = $this->createForm(AccountType::class, $user);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $manager->persist($user);
+            $manager->flush();
+
+            return $this->redirectToRoute('admin_users_index');
+        }
+
+        return $this->render('admin/users/edit.html.twig', [
+            'form' => $form->createView(),
+            'user' => $user,
         ]);
     }
 

@@ -38,10 +38,14 @@
             {% for user in users %}
                 <tr>
                     <td>{{user.id}}</td>
-                    <td> <img src="{{user.picture}}" alt="{{user.fullName}}'s avatar" class="avatar avatar-mini"></td>
-                    <td>{{user.firstName}}</td>
                     <td>
-                        {{user.lastname}}
+                        <a href="{{ path('user_show', {'slug': user.slug}) }}"><img src="{{user.picture}}" alt="{{user.fullName}}'s avatar" class="avatar avatar-mini"></a>
+                        </td>
+                    <td>
+                        <a href="{{ path('user_show', {'slug': user.slug}) }}">{{user.firstName}}</a>
+                        </td>
+                    <td>
+                        <a href="{{ path('user_show', {'slug': user.slug}) }}">{{user.lastname}}</a>
                     </td>
                     <td>
                         {% for role in user.roles %}
@@ -68,7 +72,7 @@
                         {{ user.coursesFollowed | length }}
                     </td>
                     <td>
-                        <a href="" class="btn btn-outline-success">✒️</a>
+                        <a href="{{ path('admin_users_edit', {'slug': user.slug}) }}" class="btn btn-outline-success">✒️</a>
                         <a href="" class="btn btn-outline-danger">🗑️</a>
                     </td>
                     <td>

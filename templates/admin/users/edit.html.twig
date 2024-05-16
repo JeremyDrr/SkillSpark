@@ -1,0 +1,189 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <h1 class="my-5 display-6">Edit {{ user.fullName }}'s profile</h1>
+
+        {{ form_start(form) }}
+
+        {% if not form.vars.valid %}
+            <div class="alert alert-danger">
+                {% for child in form.children %}
+                    {% for error in child.vars.errors %}
+                        {{ error.message }} <br>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="row ">
+            <div class="col-6">
+                <div class="alert bg-transparent border-light">
+                    <h2 class="alert-heading">Basic Information</h2>
+                    <hr>
+                    <div class="form-group">
+                        {{ form_label(form.firstName) }}
+                        {{ form_widget(form.firstName) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.lastName) }}
+                        {{ form_widget(form.lastName) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.email) }}
+                        {{ form_widget(form.email) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.picture) }}
+                        {{ form_widget(form.picture) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="alert bg-transparent border-light">
+                    <h2 class="alert-heading">Details</h2>
+                    <hr>
+                    <div class="form-group">
+                        {{ form_label(form.introduction) }}
+                        {{ form_widget(form.introduction) }}
+                    </div>
+                    <hr>
+                    <button type="submit" class="btn btn-success">Save ✅</button>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-6">
+                <div class="alert bg-transparent border-light">
+                    <h2 class="alert-heading">Courses Created</h2>
+                    <hr>
+
+                    <table class="table table-hover border border-light">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>Chapters</th>
+                            <th>Students</th>
+                            <th>Categories</th>
+                            <th>Price</th>
+                            <th>Instructor</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% if user.courses | length >= 1 %}
+
+                            {%for course in user.courses %}
+
+                                <tr>
+                                    <td>{{course.id}}</td>
+                                    <td>
+                                        <a href="{{ path('course_show', {'slug': course.slug}) }}">{{course.title}}</a>
+                                    </td>
+                                    <td>{{course.chapters | length}}</td>
+                                    <td>{{ course.students|length }}</td>
+                                    <td>
+                                        {{ course.category.name }}
+                                    </td>
+                                    <td>{{course.price}} €</td>
+                                    <td>
+                                        <a href="{{ path('user_show', {'slug': course.instructor.slug }) }}">
+                                            <img src="{{course.instructor.picture}}" alt="{{course.instructor.fullName}}" class="avatar avatar-micro mr-2">
+                                            {{course.instructor.fullName}} </a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('admin_courses_edit', {'slug': course.slug}) }}" class="btn btn-outline-success">✒️</a>
+                                        <a href="{{ path('admin_courses_delete', {'slug': course.slug}) }}" class="btn btn-outline-danger">🗑️</a>
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <tr>
+                                <td colspan="8" class="text-center">{{ user.fullName }} did not post any course yet..</td>
+                            </tr>
+
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="alert bg-transparent border-light">
+                    <h2 class="alert-heading">Courses Followed</h2>
+                    <hr>
+
+                    <table class="table table-hover border border-light">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>Chapters</th>
+                            <th>Students</th>
+                            <th>Categories</th>
+                            <th>Price</th>
+                            <th>Instructor</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% if user.coursesFollowed | length >= 1 %}
+
+                            {%for course in user.coursesFollowed %}
+
+                                <tr>
+                                    <td>{{course.id}}</td>
+                                    <td>
+                                        <a href="{{ path('course_show', {'slug': course.slug}) }}">{{course.title}}</a>
+                                    </td>
+                                    <td>{{course.chapters | length}}</td>
+                                    <td>{{ course.students|length }}</td>
+                                    <td>
+                                        {{ course.category.name }}
+                                    </td>
+                                    <td>{{course.price}} €</td>
+                                    <td>
+                                        <a href="{{ path('user_show', {'slug': course.instructor.slug }) }}">
+                                            <img src="{{course.instructor.picture}}" alt="{{course.instructor.fullName}}" class="avatar avatar-micro mr-2">
+                                            {{course.instructor.fullName}} </a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ path('admin_courses_edit', {'slug': course.slug}) }}" class="btn btn-outline-success">✒️</a>
+                                        <a href="{{ path('admin_courses_delete', {'slug': course.slug}) }}" class="btn btn-outline-danger">🗑️</a>
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <tr>
+                                <td colspan="8" class="text-center">{{ user.fullName }} is not following any courses yet..</td>
+                            </tr>
+
+                        {% endif %}
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+{% endblock %}

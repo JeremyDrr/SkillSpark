@@ -19,6 +19,7 @@
                 <th>Categories</th>
                 <th>Price</th>
                 <th>Instructor</th>
+                <th>Active</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -27,7 +28,9 @@
             {% for course in courses %}
                 <tr>
                     <td>{{course.id}}</td>
-                    <td>{{course.title}}</td>
+                    <td>
+                        <a href="{{ path('course_show', {'slug': course.slug}) }}">{{course.title}}</a>
+                    </td>
                     <td>{{course.chapters | length}}</td>
                     <td>{{ course.students|length }}</td>
                     <td>
@@ -40,9 +43,17 @@
                             {{course.instructor.fullName}} </a>
                     </td>
                     <td>
+                        {% if course.active %}
+                            ✅
+                        {% else %}
+                            ❌
+                        {% endif %}
+                    </td>
+                    <td>
                         <a href="{{ path('admin_courses_edit', {'slug': course.slug}) }}" class="btn btn-outline-success">✒️</a>
                         <a href="{{ path('admin_courses_delete', {'slug': course.slug}) }}" class="btn btn-outline-danger">🗑️</a>
                     </td>
+
                 </tr>
             {% endfor %}
             </tbody>
