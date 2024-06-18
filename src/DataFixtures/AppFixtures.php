@@ -74,10 +74,8 @@ class AppFixtures extends Fixture
                 ->setEmail($faker->unique()->email)
                 ->setPassword($this->encoder->hashPassword($user, 'password'))
                 ->setPicture($picture)
-                ->setIntroduction($faker->paragraph(5))
+                ->setIntroduction($faker->realTextBetween(100, 200))
                 ->setVerified($faker->boolean);
-
-
 
             $manager->persist($user);
             $users[] = $user;
@@ -90,12 +88,13 @@ class AppFixtures extends Fixture
             $category = new Category();
             $category->setName($categoryItem)
                 ->setColour($faker->hexColor);
+
             $categories[] = $category;
             $manager->persist($category);
         }
 
         // Handle courses
-        $courses = [];
+
         for($i = 0; $i < 10; $i++){
             $course = new Course();
             $course->setTitle($faker->sentence)
@@ -112,7 +111,7 @@ class AppFixtures extends Fixture
                 $chapter = new Chapter();
                 $chapter->setCourse($course)
                     ->setTitle($faker->sentence)
-                    ->setContent($faker->paragraph);
+                    ->setContent($faker->realTextBetween(150, 500));
                 $course->addChapter($chapter);
                 $manager->persist($chapter);
 
@@ -123,8 +122,6 @@ class AppFixtures extends Fixture
                 $course->addStudent($faker->randomElement($users));
             }
 
-
-            $courses = $course;
             $manager->persist($course);
         }
 

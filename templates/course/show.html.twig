@@ -18,9 +18,9 @@
 
                         <div class="div mt-3">
                             {% if app.user and app.user == course.instructor or is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path('course_edit', {'slug': course.slug}) }}" class="btn btn-outline-success">✒️ Edit the course</a>
+                                <a href="{{ path('course_edit', {'slug': course.slug}) }}" class="btn btn-outline-success">Edit the course ✒️</a>
 
-                                <a href="{{ path('course_delete', {'slug': course.slug})}}" class="btn btn-outline-danger" onclick="return confirm(`Are you sure you want to delete this course?`)">🗑️ Delete the course</a>
+                                <a href="{{ path('course_delete', {'slug': course.slug})}}" class="btn btn-outline-danger" onclick="return confirm(`Are you sure you want to delete this course?`)">Delete the course 🗑️</a>
                             {% endif %}
                         </div>
 

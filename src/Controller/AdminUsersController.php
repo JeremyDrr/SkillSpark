@@ -14,6 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AdminUsersController extends AbstractController
 {
+    /**
+     * @param UserRepository $repository
+     * @return Response
+     */
     #[Route('/admin/users', name: 'admin_users_index')]
     public function index(UserRepository $repository): Response
     {
@@ -22,6 +26,12 @@ class AdminUsersController extends AbstractController
         ]);
     }
 
+    /**
+     * @param User $user
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
     #[Route('/admin/user/{slug}/edit', name: 'admin_users_edit')]
     public function edit(User $user, Request $request, EntityManagerInterface $manager): Response
     {
@@ -41,6 +51,22 @@ class AdminUsersController extends AbstractController
             'form' => $form->createView(),
             'user' => $user,
         ]);
+    }
+
+    /**
+     * @param User $user
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
+    #[Route('/admin/user/{slug}/delete', name: 'admin_users_delete')]
+    public function delete(User $user, EntityManagerInterface $manager): Response
+    {
+
+        $manager->remove($user);
+        $manager->flush();
+
+        return $this->redirectToRoute('admin_users_index');
+
     }
 
     /**

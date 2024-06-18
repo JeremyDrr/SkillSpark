@@ -73,7 +73,7 @@
                     </td>
                     <td>
                         <a href="{{ path('admin_users_edit', {'slug': user.slug}) }}" class="btn btn-outline-success">✒️</a>
-                        <a href="" class="btn btn-outline-danger">🗑️</a>
+                        <a href="{{ path('admin_users_delete', {'slug': user.slug}) }}" class="btn btn-outline-danger">🗑️</a>
                     </td>
                     <td>
                         {{ user.warnings }}

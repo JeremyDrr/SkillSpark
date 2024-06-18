@@ -45,7 +45,7 @@ class StripeService
         $productData = [
             'name' => $course->getTitle(),
             'description' => $course->getIntroduction(),
-            'currencies' => ['eur'], // Assuming price is in Romanian Leu (RON)
+            'currencies' => ['eur'],
             'price_data' => [
                 'currency' => 'eur',
                 'unit_amount' => $course->getPrice() * 100, // Stripe prices are in cents
@@ -92,7 +92,7 @@ class StripeService
         $newPrice = $stripe->prices->create([
             'product' => $course->getStripeProductId(),
             'unit_amount' => $course->getPrice() * 100, // Convert to cents
-            'currency' => 'eur', // Assuming course has currency info
+            'currency' => 'eur',
             'active' => $course->isActive(),
         ]);
 

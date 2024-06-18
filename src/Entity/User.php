@@ -15,7 +15,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use function Symfony\Component\Clock\now;
 
-
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity(fields: "email", message: "This email address is already used by another user")]
@@ -72,6 +71,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(nullable: true)]
     private ?bool $banned = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $creatorID = null;
 
     public function __construct()
     {
@@ -338,6 +340,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBanned(?bool $banned): static
     {
         $this->banned = $banned;
+
+        return $this;
+    }
+
+    public function getCreatorID(): ?string
+    {
+        return $this->creatorID;
+    }
+
+    public function setCreatorID(?string $creatorID): static
+    {
+        $this->creatorID = $creatorID;
 
         return $this;
     }

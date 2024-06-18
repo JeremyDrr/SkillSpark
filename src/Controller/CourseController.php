@@ -46,10 +46,12 @@ class CourseController extends AbstractController
     }
 
     /**
-     * @throws ApiErrorException
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
      */
     #[Route('/courses/create', name: 'courses_create')]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('ROLE_USER', message: 'You must be an authentifiec SkillSpark user in order to be able to create a course')]
     public function create(Request $request, EntityManagerInterface $manager): Response
     {
 
@@ -87,6 +89,7 @@ class CourseController extends AbstractController
     #[Route('/course/{slug}', name: 'course_show')]
     public function show(Course $course): Response
     {
+
         return $this->render('course/show.html.twig', [
             'course' => $course
         ]);
@@ -98,6 +101,7 @@ class CourseController extends AbstractController
      * @return Response
      */
     #[Route('/course/{slug}/delete', name: 'course_delete')]
+
     public function delete(Course $course, EntityManagerInterface $manager): Response
     {
 
