@@ -23,10 +23,18 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class CourseController extends AbstractController
 {
+
+    private $stripeService;
+
+    public function __construct(StripeService $stripeService)
+    {
+        $this->stripeService = $stripeService;
+    }
+
     /**
-     * @param CourseRepository $courseRepository
      * @param $page
      * @param PaginationService $paginationService
+     * @param StatsService $statsService
      * @return Response
      */
     #[Route('/courses/{page<\d+>?1}', name: 'courses_index')]
@@ -51,23 +59,33 @@ class CourseController extends AbstractController
      * @return Response
      */
     #[Route('/courses/create', name: 'courses_create')]
-    #[IsGranted('ROLE_USER', message: 'You must be an authentifiec SkillSpark user in order to be able to create a course')]
-    public function create(Request $request, EntityManagerInterface $manager): Response
+    #[IsGranted('ROLE_USER', message: 'You must be an authenticated SkillSpark user in order to be able to create a course')]
+    public function create(Request $request, EntityManagerInterface $manager, StripeService $stripeService): Response
     {
-
         $course = new Course();
 
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            foreach($course->getChapters() as $chapter) {
+            foreach ($course->getChapters() as $chapter) {
                 $chapter->setCourse($course);
                 $manager->persist($chapter);
             }
 
             $course->setInstructor($this->getUser());
+
+            // Create product and price on Stripe
+            $stripeData = $stripeService->createProductAndPrice(
+                $course->getTitle(),
+                $course->getIntroduction(),
+                $course->getPrice() * 100, // Assuming price is in dollars, convert to cents
+                'usd'
+            );
+
+            $course->setStripeProductId($stripeData['product']->id);
+            $course->setStripePriceId($stripeData['price']->id);
 
             $manager->persist($course);
             $manager->flush();
@@ -120,23 +138,27 @@ class CourseController extends AbstractController
      * @throws ApiErrorException
      */
     #[Route('/course/{slug}/edit', name: 'course_edit')]
-    public function edit(Request $request, Course $course, EntityManagerInterface $manager): RedirectResponse|Response
+    public function edit(Request $request, Course $course, EntityManagerInterface $manager, StripeService $stripeService): Response
     {
-
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            foreach ($course->getChapters() as $chapter){
+            foreach ($course->getChapters() as $chapter) {
                 $chapter->setCourse($course);
                 $manager->persist($chapter);
             }
 
-            $stripeService = new StripeService();
-
-            $stripeProduct = $stripeService->updatePrice($course);
-            $course->setStripePriceId($stripeProduct);
+            // Update product and price on Stripe
+            $stripeData = $stripeService->updateProductAndPrice(
+                $course->getStripeProductId(),
+                $course->getStripePriceId(),
+                $course->getTitle(),
+                $course->getIntroduction(),
+                $course->getPrice() * 100, // Assuming price is in dollars, convert to cents
+                'usd'
+            );
 
             $manager->persist($course);
             $manager->flush();

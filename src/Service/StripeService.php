@@ -2,109 +2,60 @@
 
 namespace App\Service;
 
-use App\Entity\Course;
-use Stripe\Exception\ApiErrorException;
-use Stripe\PaymentIntent;
-use Stripe\Price;
-use Stripe\Product;
-use Stripe\Stripe;
 use Stripe\StripeClient;
+use Stripe\Exception\ApiErrorException;
+use Psr\Log\LoggerInterface;
 
 class StripeService
 {
-    private StripeClient $stripe;
+    private $stripeClient;
+    private $logger;
 
-    public function getStripe(){
-        return $this->stripe ??= new StripeClient($_ENV['STRIPE_PRIVATE_KEY']);
-    }
-
-    /**
-     * @param Course $course
-     * @return Product
-     * @throws ApiErrorException
-     */
-    public function createProduct(Course $course): Product
+    public function __construct(string $stripeSecretKey, LoggerInterface $logger)
     {
-        return $this->getStripe()->products->create([
-            'name' => $course->getTitle(),
-            'description' => $course->getIntroduction(),
-            'images' => [$course->getThumbnail()],
-            'active' => $course->isActive()
-
-        ]);
+        $this->stripeClient = new StripeClient($stripeSecretKey);
+        $this->logger = $logger;
     }
 
-    /**
-     * @param Course $course
-     * @return Product
-     * @throws ApiErrorException
-     */
-    public function updateProduct(Course $course): Product
+    public function createProductAndPrice(string $name, string $description, int $amount, string $currency): array
     {
+        try {
+            $product = $this->stripeClient->products->create([
+                'name' => $name,
+                'description' => $description,
+            ]);
 
-        $productData = [
-            'name' => $course->getTitle(),
-            'description' => $course->getIntroduction(),
-            'currencies' => ['eur'],
-            'price_data' => [
-                'currency' => 'eur',
-                'unit_amount' => $course->getPrice() * 100, // Stripe prices are in cents
-                'product_data' => [
-                    'name' => $course->getTitle(),
-                    'description' => $course->getIntroduction(),
-                ],
-            ],
-        ];
+            $price = $this->stripeClient->prices->create([
+                'unit_amount' => $amount,
+                'currency' => $currency,
+                'product' => $product->id,
+            ]);
 
-
-        return $this->getStripe()->products->update($course->getStripePriceId(), [
-            'name' => $course->getTitle(),
-            'description' => $course->getIntroduction(),
-            'images' => [$course->getThumbnail()],
-            'active' => $course->isActive()
-
-        ]);
+            return ['product' => $product, 'price' => $price];
+        } catch (ApiErrorException $e) {
+            $this->logger->error('Stripe API error: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
-    /**
-     * @param Course $course
-     * @return Price
-     * @throws ApiErrorException
-     */
-    public function createPrice(Course $course): Price
+    public function updateProductAndPrice(string $productId, string $priceId, string $name, string $description, int $amount, string $currency): array
     {
-        return $this->getStripe()->prices->create([
-            'unit_amount' => $course->getPrice()*100,
-            'currency' => 'eur',
-            'product' => $course->getStripeProductId(),
+        try {
+            $product = $this->stripeClient->products->update($productId, [
+                'name' => $name,
+                'description' => $description,
+            ]);
 
-        ]);
+            $price = $this->stripeClient->prices->create([
+                'unit_amount' => $amount,
+                'currency' => $currency,
+                'product' => $productId,
+            ]);
+
+            return ['product' => $product, 'price' => $price];
+        } catch (ApiErrorException $e) {
+            $this->logger->error('Stripe API error: ' . $e->getMessage());
+            throw $e;
+        }
     }
-
-    /**
-     * @param Course $course
-     * @return Price
-     * @throws ApiErrorException
-     */
-    public function updatePrice(Course $course): Price
-    {
-        $stripe = $this->getStripe();
-        $newPrice = $stripe->prices->create([
-            'product' => $course->getStripeProductId(),
-            'unit_amount' => $course->getPrice() * 100, // Convert to cents
-            'currency' => 'eur',
-            'active' => $course->isActive(),
-        ]);
-
-        // Deactivate the old price (optional)
-        $stripe->prices->update($course->getStripePriceId(), ['active' => false]);
-
-        // Update course with new price ID (optional)
-        $course->setStripePriceId($newPrice->id);
-
-
-        return $newPrice;
-    }
-
-
 }
