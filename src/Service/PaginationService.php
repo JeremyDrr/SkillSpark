@@ -1,15 +1,11 @@
 <?php
-
 namespace App\Service;
 
-use App\Entity\Article;
-use App\Entity\User;
-use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
 
-class PaginationService{
+class PaginationService {
 
     private $entityClass;
     private $limit = 10;
@@ -18,154 +14,83 @@ class PaginationService{
     private $twig;
     private $route;
     private $templatePath;
+    private $additionalParams = [];
+    private $filters = [];
+    private $paramName = 'page';
 
-    public function __construct(EntityManagerInterface $manager, Environment $twig, RequestStack $request, $templatePath)
+    public function __construct(EntityManagerInterface $manager, Environment $twig, RequestStack $requestStack, $templatePath)
     {
-        $this->route = $request->getCurrentRequest()->attributes->get("_route");
+        $this->route = $requestStack->getCurrentRequest()->attributes->get("_route");
         $this->manager = $manager;
         $this->twig = $twig;
         $this->templatePath = $templatePath;
     }
 
-    public function display(){
-
-        if(!empty($this->options)){
-            $this->twig->display($this->templatePath, [
-                'page' => $this->currentPage,
-                'pages' => $this->getPages(),
-                'route' => $this->route,
-            ]);
-        }else{
-            $this->twig->display($this->templatePath, [
-                'page' => $this->currentPage,
-                'pages' => $this->getPages(),
-                'route' => $this->route,
-            ]);
-        }
-
-
+    public function display() {
+        $this->twig->display($this->templatePath, [
+            'page' => $this->currentPage,
+            'pages' => $this->getPages(),
+            'route' => $this->route,
+            'data' => $this->getData(),
+            'additionalParams' => $this->additionalParams,
+            'paramName' => $this->paramName
+        ]);
     }
 
-    public function getPages(){
-
-        if(empty($this->entityClass)){
-            throw new \Exception("You did not specify the entity on which you want to paginate! Use the setEntityClass() method of your PaginationService object");
-        }
-        $total = count(
-            $this->manager->getRepository($this->entityClass)
-                ->findAll());
-
-        $pages = ceil($total/$this->limit);
-
-        return $pages;
-    }
-
-    public function getData(){
-
-        if(empty($this->entityClass)){
+    public function getPages() {
+        if (empty($this->entityClass)) {
             throw new \Exception("You did not specify the entity on which you want to paginate! Use the setEntityClass() method of your PaginationService object");
         }
 
-        $offset = $this->currentPage * $this->limit - $this->limit;
-
-        return $this->manager->getRepository($this->entityClass)
-            ->findBy([], [], $this->limit, $offset);
-
-
+        $total = $this->manager->getRepository($this->entityClass)->count($this->filters);
+        return ceil($total / $this->limit);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getEntityClass() : string
-    {
-        return $this->entityClass;
+    public function getData() {
+        if (empty($this->entityClass)) {
+            throw new \Exception("You did not specify the entity on which you want to paginate! Use the setEntityClass() method of your PaginationService object");
+        }
+        $offset = ($this->currentPage - 1) * $this->limit;
+        return $this->manager->getRepository($this->entityClass)->findBy($this->filters, [], $this->limit, $offset);
     }
 
-    /**
-     * @param mixed $entityClass
-     * @return PaginationService
-     */
-    public function setEntityClass($entityClass) : self
-    {
+    public function setEntityClass($entityClass): self {
         $this->entityClass = $entityClass;
-
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getLimit() : int
-    {
-        return $this->limit;
-    }
-
-    /**
-     * @param int $limit
-     * @return PaginationService
-     */
-    public function setLimit(int $limit) : self
-    {
+    public function setLimit(int $limit): self {
         $this->limit = $limit;
-
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getPage() : int
-    {
-        return $this->currentPage;
-    }
-
-    /**
-     * @param int $currentPage
-     * @return PaginationService
-     */
-    public function setPage(int $currentPage) : self
-    {
+    public function setPage(int $currentPage): self {
         $this->currentPage = $currentPage;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRoute() : string
-    {
-        return $this->route;
-    }
-
-    /**
-     * @param mixed $route
-     * @return PaginationService
-     */
-    public function setRoute($route) : self
-    {
+    public function setRoute($route): self {
         $this->route = $route;
-
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getTemplatePath() : string
-    {
-        return $this->templatePath;
-    }
-
-    /**
-     * @param mixed $templatePath
-     * @return PaginationService
-     */
-    public function setTemplatePath($templatePath) : self
-    {
+    public function setTemplatePath($templatePath): self {
         $this->templatePath = $templatePath;
-
         return $this;
     }
 
+    public function setAdditionalParams(array $params): self {
+        $this->additionalParams = $params;
+        return $this;
+    }
+
+    public function setFilters(array $filters): self {
+        $this->filters = $filters;
+        return $this;
+    }
+
+    public function setParamName(string $paramName): self {
+        $this->paramName = $paramName;
+        return $this;
+    }
 }

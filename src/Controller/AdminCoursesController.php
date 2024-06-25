@@ -47,6 +47,8 @@ class AdminCoursesController extends AbstractController
             $manager->persist($course);
             $manager->flush();
 
+            $this->addFlash('success', 'You have successfully edited the course ' . $course->getTitle());
+
             return $this->redirectToRoute('admin_courses_index');
 
         }
@@ -67,6 +69,8 @@ class AdminCoursesController extends AbstractController
 
         $manager->remove($course);
         $manager->flush();
+
+        $this->addFlash('success', 'You have successfully deleted the course ' . $course->getTitle());
 
         return $this->redirectToRoute('admin_courses_index');
 

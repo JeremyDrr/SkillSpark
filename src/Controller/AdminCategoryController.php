@@ -36,6 +36,8 @@ class AdminCategoryController extends AbstractController
             $manager->persist($category);
             $manager->flush();
 
+            $this->addFlash('success', 'You have successfully created the category ' . $category->getName());
+
             return $this->redirectToRoute('admin_categories_index');
         }
 
@@ -62,7 +64,10 @@ class AdminCategoryController extends AbstractController
             $manager->persist($category);
             $manager->flush();
 
+            $this->addFlash('success', 'You have successfully edited the category ' . $category->getName());
+
             return $this->redirectToRoute('admin_categories_index');
+
         }
 
         return $this->render('admin/category/edit.html.twig', [
@@ -75,6 +80,8 @@ class AdminCategoryController extends AbstractController
 
         $manager->remove($category);
         $manager->flush();
+
+        $this->addFlash('success', 'You have successfully deleted the category ' . $category->getName());
 
         return $this->redirectToRoute('admin_categories_index');
     }

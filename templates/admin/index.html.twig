@@ -1,27 +1,38 @@
-{% extends 'admin/base.html.twig' %}
-
-{% block title %}Login{% endblock %}
-
-{% block body %}
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="card shadow rounded-lg p-4 border-white">
-            <h3 class="card-title text-center mb-4">Admin Panel</h3>
-            <form action="/login" method="post">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SkillSpark &boxh; Admin Panel</title>
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+</head>
+<body class="bg-dark-subtle">
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow rounded-lg p-4 border-white">
+        <h3 class="card-title text-center mb-4">Admin Panel</h3>
+        <form method="post">
+            <div class="mb-3">
+                <label for="_username" class="form-label">Username</label>
+                <input type="text" class="form-control" value="{{ username }}" id="_username" name="_username" required>
+            </div>
+            <div class="mb-3">
+                <label for="_password" class="form-label">Password </label>
+                <input type="password" class="form-control" id="_password" name="_password" required>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">Remember me</label>
                 </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password </label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="rememberMe">
-                        <label class="form-check-label" for="rememberMe">Remember me</label>
-                    </div>
-                </div>
+            </div>
 
-            </form>
-            <a class="btn btn-success">Sign In</a>
-        </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">Sign In</button>
+                <a class="btn btn-secondary">Back to SkillSpark</a>
+            </div>
+
+        </form>
+
     </div>
-{% endblock %}
+</div>
+</body>
+</html>

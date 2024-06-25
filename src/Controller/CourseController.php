@@ -13,6 +13,7 @@ use App\Service\StatsService;
 use App\Service\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Exception\ApiErrorException;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\MakerBundle\Str;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -45,7 +46,8 @@ class CourseController extends AbstractController
 
         $paginationService->setEntityClass(Course::class)
             ->setPage($page)
-            ->setLimit(18);
+            ->setLimit(12)
+            ->setParamName('page');
 
         return $this->render('course/index.html.twig', [
             'pagination' => $paginationService,
@@ -56,7 +58,9 @@ class CourseController extends AbstractController
     /**
      * @param Request $request
      * @param EntityManagerInterface $manager
+     * @param StripeService $stripeService
      * @return Response
+     * @throws ApiErrorException
      */
     #[Route('/courses/create', name: 'courses_create')]
     #[IsGranted('ROLE_USER', message: 'You must be an authenticated SkillSpark user in order to be able to create a course')]
@@ -80,8 +84,9 @@ class CourseController extends AbstractController
             $stripeData = $stripeService->createProductAndPrice(
                 $course->getTitle(),
                 $course->getIntroduction(),
-                $course->getPrice() * 100, // Assuming price is in dollars, convert to cents
-                'usd'
+                $course->getPrice() * 100, // Convert the price to cents
+                'eur',
+                $course->isActive(),
             );
 
             $course->setStripeProductId($stripeData['product']->id);
@@ -89,6 +94,8 @@ class CourseController extends AbstractController
 
             $manager->persist($course);
             $manager->flush();
+
+            $this->addFlash('success', 'You have successfully created the course ' . $course->getTitle());
 
             return $this->redirectToRoute('course_show', [
                 'slug' => $course->getSlug()
@@ -101,17 +108,27 @@ class CourseController extends AbstractController
     }
 
     /**
+     * @param $chapter
+     * @param PaginationService $paginationService
      * @param Course $course
      * @return Response
      */
-    #[Route('/course/{slug}', name: 'course_show')]
-    public function show(Course $course): Response
+    #[Route('/course/{slug}/{chapter<\d+>?1}', name: 'course_show')]
+    public function show($chapter, PaginationService $paginationService, Course $course): Response
     {
+        $paginationService->setEntityClass(Chapter::class)
+            ->setLimit(1)
+            ->setPage($chapter)
+            ->setAdditionalParams(['slug' => $course->getSlug()])
+            ->setFilters(['course' => $course])
+            ->setParamName('chapter');
 
-        return $this->render('course/show.html.twig', [
-            'course' => $course
+        return $this->render('course/show2.html.twig', [
+            'pagination' => $paginationService,
+            'course' => $course,
         ]);
     }
+
 
     /**
      * @param Course $course
@@ -126,6 +143,7 @@ class CourseController extends AbstractController
         $manager->remove($course);
         $manager->flush();
 
+        $this->addFlash('success', 'You have successfully deleted the course ' . $course->getTitle());
 
         return $this->redirectToRoute('courses_index');
     }
@@ -134,7 +152,8 @@ class CourseController extends AbstractController
      * @param Request $request
      * @param Course $course
      * @param EntityManagerInterface $manager
-     * @return RedirectResponse|Response
+     * @param StripeService $stripeService
+     * @return Response
      * @throws ApiErrorException
      */
     #[Route('/course/{slug}/edit', name: 'course_edit')]
@@ -156,12 +175,17 @@ class CourseController extends AbstractController
                 $course->getStripePriceId(),
                 $course->getTitle(),
                 $course->getIntroduction(),
-                $course->getPrice() * 100, // Assuming price is in dollars, convert to cents
-                'usd'
+                $course->getPrice() * 100, // Convert the price to cents
+                'eur',
+                $course->isActive(),
             );
+
+            $course->setStripePriceId($stripeData['price']->id);
 
             $manager->persist($course);
             $manager->flush();
+
+            $this->addFlash('success', 'You have successfully edited the course ' . $course->getTitle());
 
             return $this->redirectToRoute('course_show', [
                 'slug' => $course->getSlug()

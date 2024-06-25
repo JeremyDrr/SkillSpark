@@ -7,6 +7,7 @@ use App\Form\AccountType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +27,41 @@ class AdminUsersController extends AbstractController
         ]);
     }
 
+    #[Route('/admin/search-user', name: 'admin_search_user')]
+    public function searchUser(Request $request, UserRepository $userRepository): JsonResponse
+    {
+        $searchTerm = $request->query->get('q', '');
+
+        if (!$searchTerm) {
+            return new JsonResponse([]);
+        }
+
+        $users = $userRepository->findByUsernameOrEmail($searchTerm);
+
+        $result = [];
+        foreach ($users as $user) {
+            $result[] = [
+                'id' => $user->getId(),
+                'picture' => $user->getPicture(),
+                'firstName' => $user->getFirstName(),
+                'lastName' => $user->getLastName(),
+                'fullName' => $user->getFullName(),
+                'slug' => $user->getSlug(),
+                'roles' => $user->getRoles(),
+                'verified' => $user->isVerified(),
+                'coursesCreated' => $user->getCourses()->toArray(),
+                'coursesFollowed' => $user->getCoursesFollowed()->toArray(),
+                'warnings' => $user->getWarnings(),
+                'banned' => $user->isBanned(),
+                'showPath' => $this->generateUrl('user_show', ['slug' => $user->getSlug()]),
+                'editPath' => $this->generateUrl('admin_users_edit', ['slug' => $user->getSlug()]),
+                'deletePath' => $this->generateUrl('admin_users_delete', ['slug' => $user->getSlug()]),
+            ];
+        }
+
+        return new JsonResponse($result);
+    }
+
     /**
      * @param User $user
      * @param Request $request
@@ -43,6 +79,8 @@ class AdminUsersController extends AbstractController
 
             $manager->persist($user);
             $manager->flush();
+
+            $this->addFlash('success', 'You have successfully edited ' . $user->getFullName() . '\'s account.');
 
             return $this->redirectToRoute('admin_users_index');
         }
@@ -64,6 +102,8 @@ class AdminUsersController extends AbstractController
 
         $manager->remove($user);
         $manager->flush();
+
+        $this->addFlash('success', 'You have successfully deleted ' . $user->getFullName() . '\'s account.');
 
         return $this->redirectToRoute('admin_users_index');
 

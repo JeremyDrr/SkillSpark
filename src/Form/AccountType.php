@@ -28,7 +28,8 @@ class AccountType extends ApplicationType
             ]))
             ->add('email', EmailType::class, $this->getConfiguration('Email address', '', [
                 'attr' => [
-                    'class' => 'form-control mb-3'
+                    'class' => 'form-control disabled bg-secondary-subtle mb-3',
+                    'readonly' => 'readonly'
                 ]
             ]))
             ->add('picture', TextType::class, $this->getConfiguration('Picture', '', [

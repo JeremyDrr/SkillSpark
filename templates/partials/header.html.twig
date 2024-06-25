@@ -1,46 +1,55 @@
 <style>
-    .navbar-title{
+    .navbar-title {
         color: white;
         font-size: 20px;
         text-transform: uppercase;
     }
 
-    .navbar-title-lab{
+    .navbar-title-lab {
         color: #FFC500;
+    }
+
+    .navbar-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-grow: 1;
+    }
+
+    .navbar-center > * {
+        margin: 0 10px;
+    }
+
+    .navbar-brand {
+        margin: 0 20px;
     }
 </style>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-
     <div class="container-fluid">
+        <a class="navbar-brand" href="{{ path('homepage') }}">
+            SKILL<span class="navbar-title-lab">SPARK</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#skillnav" aria-controls="skillnav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#skillnav" aria-controls="skillnav" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="skillnav">
+            <div class="navbar-center mx-auto">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('homepage') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('courses_index') }}">Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('about') }}">About</a>
+                    </li>
+                </ul>
+            </div>
 
-        <div class="collapse navbar-collapse justify-content-center" id="skillnav">
-
-            <ul class="navbar-nav d-flex align-items-center">
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('homepage') }}">Home</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('courses_index') }}">Courses</a>
-                </li>
-
-                <div class="navbar-brand mx-auto">
-                    <a class="nav-link navbar-title" href="{{ path('homepage') }}">
-                        Skill<span class="navbar-title-lab">Spark</span>
-                    </a>
-                </div>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('about') }}">About</a>
-                </li>
-
-            </ul>
-
-            <ul class="navbar-nav">
+            <ul class="navbar-nav ms-auto">
                 {% if app.user %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="accountDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -48,7 +57,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end bg-dark-subtle" aria-labelledby="accountDropdownLink">
                             {% if is_granted('ROLE_ADMIN') %}
-                                <a href="{{ path('admin_login') }}" class="dropdown-item">Admin Panel</a>
+                                <a href="{{ path('admin_dashboard') }}" class="dropdown-item">Admin Panel</a>
                                 <div class="dropdown-divider"></div>
                             {% endif %}
                             <a href="{{ path('courses_create') }}" class="dropdown-item">Create a course</a>
@@ -56,9 +65,17 @@
                             <a href="{{ path('user_edit', {'slug': app.user.slug}) }}" class="dropdown-item">Settings</a>
                             <div class="dropdown-divider"></div>
                             <a href="{{ path('logout') }}" class="dropdown-item">Disconnect</a>
-
                         </ul>
-
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('cart_index') }}">
+                            <div style="display: flex; align-items: center;">
+                                🛒
+                                {% if app.session.get('cart') is not empty %}
+                                    <span class="badge badge-pill bg-danger ms-2">{{ app.session.get('cart') | length }}</span>
+                                {% endif %}
+                            </div>
+                        </a>
                     </li>
                 {% else %}
                     <li class="nav-item dropdown">
@@ -68,79 +85,7 @@
                         <ul class="dropdown-menu dropdown-menu-end bg-dark-subtle" aria-labelledby="accountDropdownLink">
                             <a href="{{ path('signup') }}" class="dropdown-item">Create an account</a>
                             <a href="{{ path('login') }}" class="dropdown-item">Connect</a>
-
-
-
                         </ul>
-
-                    </li>
-                {% endif %}
-            </ul>
-
-        </div>
-
-    </div>
-
-</nav>
-
-<!--
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <div class="ms-auto order-0">
-            <a class="navbar-brand" href="#">
-                <img src="/assets/img/Logo.jpeg" alt="SkillSpark's logo" width="30" height="24">
-                <a class="navbar-brand" href="{{ path('homepage') }}">SkillSpark</a>
-            </a>
-
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('homepage') }}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('courses_index') }}">Courses</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#about">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#contact">Contact</a>
-                </li>
-            </ul>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="navbar-nav ms-auto">
-                {% if app.user %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="accountDropdownLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="{{ app.user.picture }}" class="avatar avatar-micro" alt="{{ app.user.fullName }}'s avatar"> {{ app.user.fullName }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="accountDropdownLink">
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <a href="" class="dropdown-item">Admin Panel</a>
-                                <div class="dropdown-divider"></div>
-                            {% endif %}
-                            <a href="{{ path('courses_create') }}" class="dropdown-item">Create a course</a>
-                            <a href="{{ path('user_show', {'slug': app.user.slug}) }}" class="dropdown-item">My account</a>
-                            <a href="{{ path('user_edit', {'slug': app.user.slug}) }}" class="dropdown-item">Settings</a>
-                            <div class="dropdown-divider"></div>
-                            <a href="{{ path('logout') }}" class="dropdown-item">Disconnect</a>
-
-                        </ul>
-
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a href="{{ path('signup') }}" class="nav-link">Create an account</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ path('login') }}" class="nav-link">Connect</a>
                     </li>
                 {% endif %}
             </ul>
@@ -148,4 +93,3 @@
     </div>
 </nav>
 
---->

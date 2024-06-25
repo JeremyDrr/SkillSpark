@@ -1,6 +1,8 @@
 {% set url = path('course_show', {'slug': course.slug}) %}
 
-<div class="col-md-3 mb-3 ">
+{# id used to redirect the user exactly
+where they were scrolling once we refresh the page #}
+<div class="col-md-3 mb-3" id="course-{{ course.id }}">
 
     <div class="card border-light rounded-2 h-100">
 
@@ -10,10 +12,10 @@
             <h5 class="card-title fw-medium text-center">{{ course.title }}</h5>
             <div class="text-center my-2">
                 {% if not course.active %}
-                    <small class="badge text-bg-warning me-auto card-header-pills">Not published</small>
+                    <small class="badge text-bg-warning me-2 card-header-pills">Not published</small>
                 {% endif %}
 
-                    <small class="badge text-bg-info me-auto card-header-pills">{{ course.category.name }}</small>
+                <small class="badge text-bg-info me-auto card-header-pills">{{ course.category.name }}</small>
 
             </div>
             <p class="card-text text-white-50">{{ course.introduction }}</p>

@@ -16,12 +16,15 @@ class AdminController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         $username = $authenticationUtils->getLastUsername();
 
-        if($this->getUser() != null)
-            return $this->redirectToRoute('admin_dashboard');
 
         return $this->render('admin/index.html.twig', [
             'hasError' => $error !== null,
             'username' => $username
         ]);
+    }
+
+    #[Route('/admin/logout', name: 'admin_logout')]
+    public function logout(){
+
     }
 }

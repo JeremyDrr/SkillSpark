@@ -12,9 +12,10 @@
                 <div class="input-group-prepend">
                     <div class="input-group-text">🔎</div>
                 </div>
-                <input type="text" class="form-control border-success" id="inlineFormInputGroup" placeholder="User">
+                <input type="text" class="form-control border-success" id="searchUserInput" placeholder="User" aria-label="Search User">
             </div>
         </div>
+
 
         <table class="table table-hover border border-light">
             <thead>
@@ -34,16 +35,20 @@
             </tr>
             </thead>
 
-            <tbody>
+            <tbody id="searchResultsBody">
+            <!-- Search results will be prepended here -->
+            </tbody>
+
+            <tbody id="allUsersBody">
             {% for user in users %}
                 <tr>
                     <td>{{user.id}}</td>
                     <td>
                         <a href="{{ path('user_show', {'slug': user.slug}) }}"><img src="{{user.picture}}" alt="{{user.fullName}}'s avatar" class="avatar avatar-mini"></a>
-                        </td>
+                    </td>
                     <td>
                         <a href="{{ path('user_show', {'slug': user.slug}) }}">{{user.firstName}}</a>
-                        </td>
+                    </td>
                     <td>
                         <a href="{{ path('user_show', {'slug': user.slug}) }}">{{user.lastname}}</a>
                     </td>
@@ -103,4 +108,39 @@
         </table>
 
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('searchUserInput');
+            const allUserRows = document.querySelectorAll('#allUsersBody tr');
+
+            searchInput.addEventListener('keyup', function () {
+                const query = searchInput.value.toLowerCase();
+
+                allUserRows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const containsQuery = Array.from(cells).some(cell => {
+                        return cell.textContent.toLowerCase().includes(query);
+                    });
+
+                    if (containsQuery) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                if (query.length === 0) {
+                    allUserRows.forEach(row => {
+                        row.style.display = '';
+                    });
+                }
+            });
+        });
+
+
+
+    </script>
 {% endblock %}

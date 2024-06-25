@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\AccountType;
 use App\Form\SignupType;
+use App\Service\StripeService;
 use Doctrine\ORM\EntityManagerInterface;
+use Stripe\Stripe;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +44,7 @@ class AccountController extends AbstractController
      * @return Response
      */
     #[Route('/signup', name: 'signup')]
-    public function signup(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder): Response
+    public function signup(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $encoder, StripeService $stripeService): Response
     {
 
         if($this->getUser() != null)
@@ -57,11 +59,28 @@ class AccountController extends AbstractController
             $password = $encoder->hashPassword($user, $user->getPassword());
             $user->setPassword($password);
 
+            // Create a connected Stripe account
+            try {
+                $stripeAccountId = $stripeService->createConnectedAccount();
+                $user->setCreatorID($stripeAccountId);
+            } catch (\Exception $e) {
+                $this->addFlash('danger', 'Unable to create a Stripe account: ' . $e->getMessage());
+                return $this->redirectToRoute('signup');
+            }
+
             $manager->persist($user);
             $manager->flush();
 
+            // Generate account link URLs
+            $urls = $stripeService->generateAccountLinkUrls();
+            $accountLinkUrl = $stripeService->generateAccountLink($stripeAccountId, $urls['return_url'], $urls['refresh_url']);
+
             $this->addFlash('success', 'Registration successful. You can now log in.');
-            return $this->redirectToRoute('login');
+
+            return $this->redirect($accountLinkUrl);
+
+
+
         }
 
         return $this->render('account/signup.html.twig', [
