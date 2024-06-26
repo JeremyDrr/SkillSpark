@@ -23,8 +23,8 @@ class ChapterType extends ApplicationType
             ]))
             ->add('content', TextareaType::class, $this->getConfiguration('Content', '', [
                 'attr' => [
-                    'class' => 'form-control mb-3',
-                    'rows' => 5
+                    'class' => 'mb-5 form-control quill-editor',
+                    'rows' => 3
                 ],
 
             ]))

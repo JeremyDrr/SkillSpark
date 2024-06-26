@@ -4,6 +4,7 @@
 
 {% block body %}
 
+    <div id="progress" style="width: {{ progress }}%"></div>
     <div class="article article-title">
         <div class="container">
             <div class="row">
@@ -30,7 +31,7 @@
                     <h5>Share</h5>
                     <hr>
                     <div class="btn socialbtn share_twitter" data-url="{{ url('course_show', {'slug' : course.slug}) }}">
-                        <img src="/assets/img/x.svg" alt="Twitter's Logo">
+                        <img src="/assets/img/x.svg" alt="X's (fka Twitter) Logo">
                     </div>
                     <div class="btn socialbtn share_facebook" data-url="{{ url('course_show', {'slug' : course.slug}) }}">
                         <img src="/assets/img/facebook.svg" alt="Facebook's Logo">

@@ -49,6 +49,7 @@ class CourseController extends AbstractController
             ->setLimit(12)
             ->setParamName('page');
 
+
         return $this->render('course/index.html.twig', [
             'pagination' => $paginationService,
             'trendingCourses' => $trendingCourses,
@@ -114,7 +115,7 @@ class CourseController extends AbstractController
      * @return Response
      */
     #[Route('/course/{slug}/{chapter<\d+>?1}', name: 'course_show')]
-    public function show($chapter, PaginationService $paginationService, Course $course): Response
+    public function show($chapter, PaginationService $paginationService, Course $course, EntityManagerInterface $manager): Response
     {
         $paginationService->setEntityClass(Chapter::class)
             ->setLimit(1)
@@ -123,9 +124,18 @@ class CourseController extends AbstractController
             ->setFilters(['course' => $course])
             ->setParamName('chapter');
 
+        if($course->getChapters()->count() > 0){
+            $totalChapters = $manager->getRepository(Chapter::class)->count(['course' => $course]);
+            $progress = ($chapter / $totalChapters) * 100;
+        }else{
+            $progress = 100;
+        }
+
+
         return $this->render('course/show2.html.twig', [
             'pagination' => $paginationService,
             'course' => $course,
+            'progress' => $progress,
         ]);
     }
 
