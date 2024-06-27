@@ -5,7 +5,7 @@
 {% block body %}
 
     <div id="progress" style="width: {{ progress }}%"></div>
-    <div class="article article-title">
+    <div class="article article-title mb-5">
         <div class="container">
             <div class="row">
                 <div class="col-8 my-3">
@@ -42,38 +42,38 @@
     </div>
 
     {% for chapter in pagination.data %}
-    <div class="container my-5">
-        <div class="row my-5">
-            <div class="col-md-8">
+        <div class="container my-5">
+            <div class="row my-5">
+                <div class="col-md-8">
                     <h1>{{ chapter.title }}</h1>
                     <p class="py-5">{{ chapter.content | raw }}</p>
-            </div>
-
-            <div class="col-4">
-                {% set a = course.instructor %}
-                <div class="row mb-3 align-items-center">
-                    <div class="col-2">
-                        <a href="{{ path('user_show', {'slug': a.slug}) }}">
-                            <img src="{{a.picture}}" class="avatar avatar-medium" alt="Photo de profil de {{a.fullName}}">
-                        </a>
-                    </div>
-                    <div class="col-auto">
-                        <a href="{{ path('user_show', {'slug': a.slug}) }}">
-                            <h3>{{a.fullName}}  {% include 'partials/verified.html.twig' with {'user': a} %}</h3>
-                        </a>
-
-                        {% if a.courses | length <= 1 %}
-                            <span class="badge bg-dark">{{a.courses | length}} course</span>
-                        {% endif %}
-                        {% if a.courses | length >= 2 %}
-                            <span class="badge bg-dark">{{a.courses | length}} courses</span>
-                        {% endif %}
-                    </div>
                 </div>
-                {{ a.introduction | raw }}
+
+                <div class="col-4">
+                    {% set a = course.instructor %}
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-2">
+                            <a href="{{ path('user_show', {'slug': a.slug}) }}">
+                                <img src="{{a.picture}}" class="avatar avatar-medium" alt="Photo de profil de {{a.fullName}}">
+                            </a>
+                        </div>
+                        <div class="col-auto">
+                            <a href="{{ path('user_show', {'slug': a.slug}) }}">
+                                <h3>{{a.fullName}}  {% include 'partials/verified.html.twig' with {'user': a} %}</h3>
+                            </a>
+
+                            {% if a.courses | length <= 1 %}
+                                <span class="badge bg-dark">{{a.courses | length}} course</span>
+                            {% endif %}
+                            {% if a.courses | length >= 2 %}
+                                <span class="badge bg-dark">{{a.courses | length}} courses</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {{ a.introduction | raw }}
+                </div>
             </div>
         </div>
-    </div>
 
     {% endfor %}
 

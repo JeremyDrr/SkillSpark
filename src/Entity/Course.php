@@ -88,6 +88,10 @@ class Course
             $slugify = new Slugify();
             $this->slug = $slugify->slugify($this->title.' '.$this->instructor->getFullName());
         }
+
+        if(count($this->getChapters()) == 0){
+            $this->active = false;
+        }
     }
 
     /**

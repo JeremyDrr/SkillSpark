@@ -50,18 +50,15 @@
                 <h2 class="text-center py-lg-0 mb-5 lead">Refresh this page later</h2>
             {% else %}
 
-                {% for course in pagination.data|sort %}
+                {% set activeCourses = pagination.data|filter(course => course.active) %}
 
-                    {% if course.active %}
-                        {% include 'course/_card.html.twig' %}
-                    {% endif %}
-
+                {% for course in activeCourses|sort %}
+                    {% include 'course/_card.html.twig' %}
                 {% endfor %}
 
                 {{ pagination.display }}
 
             {% endif %}
-
 
         </div>
     </div>

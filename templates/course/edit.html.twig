@@ -4,6 +4,10 @@
 
 {% form_theme form '/course/_collection.html.twig' %}
 
+{% block stylesheets %}
+    <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
+{% endblock %}
+
 {% block body %}
     <div class="container">
         <h1 class="my-5">Edit course 🖊️</h1>
@@ -78,22 +82,77 @@
         <div class="row">
 
             <div class="alert border-light">
-                {{ form_start(form) }}
+                <h2 class="alert-heading">Chapters</h2>
+                <hr>
 
-                {{ form_widget(form) }}
-
+                {{ form_widget(form.chapters) }}
                 {{ form_end(form) }}
+
             </div>
-
-
-
         </div>
-
     </div>
 {% endblock %}
 
 {% block javascripts %}
 
     <script src="/assets/js/course.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeQuillEditors();
 
+            document.getElementById('add-chapter').addEventListener('click', function () {
+                // Wait a bit to ensure the new element is added to the DOM
+                setTimeout(() => {
+                    initializeQuillEditors();
+                }, 500);
+            });
+
+            function initializeQuillEditors() {
+                document.querySelectorAll('.quill-editor').forEach(function (element) {
+                    if (!element.quill) { // Prevent re-initialization
+                        const quillContainer = document.createElement('div');
+                        quillContainer.classList.add('form-control');
+                        element.style.display = 'none'; // Hide the original textarea
+
+
+                        element.parentNode.insertBefore(quillContainer, element.nextSibling);
+
+                        const toolbarOptions = [
+                            [{ 'header': [1, 2, false] }],
+                            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                            ['blockquote', 'code-block'],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+                            [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                            [{ 'direction': 'rtl' }],                         // text direction
+                            [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                            [{ 'font': [] }],
+                            [{ 'align': [] }],
+                            ['clean'],                                         // remove formatting button
+                            ['link', 'image', 'video']                         // link and image, video
+                        ];
+
+                        const quill = new Quill(quillContainer, {
+                            theme: 'bubble',
+                            modules: {
+                                toolbar: toolbarOptions
+                            }
+                        });
+
+                        // Set initial content from the textarea
+                        quill.root.innerHTML = element.value;
+
+                        quill.on('text-change', function () {
+                            element.value = quill.root.innerHTML;
+                        });
+
+                        element.quill = quill;
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}
