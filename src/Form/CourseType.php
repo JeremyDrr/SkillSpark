@@ -54,7 +54,7 @@ class CourseType extends ApplicationType
             ])
             ->add('chapters', CollectionType::class, $this->getConfiguration('', '', [
                 'attr' => [
-                    'class' => 'mb-3'
+                    'class' => 'mb-3 form-control'
                 ],
                 'required' => false,
                 'entry_type' => ChapterType::class,

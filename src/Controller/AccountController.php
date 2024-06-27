@@ -165,12 +165,12 @@ class AccountController extends AbstractController
      * @return RedirectResponse|Response
      */
     #[Route('/account/password-update', name: 'account_password')]
-    public function updatePassword(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager, User $user): RedirectResponse|Response
+    #[IsGranted('ROLE_USER')]
+    public function updatePassword(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager): RedirectResponse|Response
     {
+        $user = $this->getUser();
 
         $this->denyAccessUnlessGranted('edit', $user);
-
-        $user = $this->getUser();
 
         $passwordUpdate = new PasswordUpdate();
 
@@ -212,7 +212,7 @@ class AccountController extends AbstractController
 
             if ($user === null) {
 
-                $form->addError(new FormError("The email address you entered matches with no user"));
+                $this->addFlash('danger', 'The email address you entered matches with no SkillSpark user');
                 return $this->redirectToRoute('user_forget_password');
             }
 

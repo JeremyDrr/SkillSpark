@@ -112,7 +112,7 @@
                 document.querySelectorAll('.quill-editor').forEach(function (element) {
                     if (!element.quill) { // Prevent re-initialization
                         const quillContainer = document.createElement('div');
-                        quillContainer.classList.add('form-control');
+                        quillContainer.classList.add('form-control mb-3');
                         element.style.display = 'none'; // Hide the original textarea
 
 
@@ -120,19 +120,19 @@
 
                         const toolbarOptions = [
                             [{ 'header': [1, 2, false] }],
-                            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                            ['bold', 'italic', 'underline', 'strike'],
                             ['blockquote', 'code-block'],
                             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                            [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-                            [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-                            [{ 'direction': 'rtl' }],                         // text direction
-                            [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                            [{ 'script': 'sub'}, { 'script': 'super' }],
+                            [{ 'indent': '-1'}, { 'indent': '+1' }],
+                            [{ 'direction': 'rtl' }],
+                            [{ 'size': ['small', false, 'large', 'huge'] }],
                             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                            [{ 'color': [] }, { 'background': [] }],
                             [{ 'font': [] }],
                             [{ 'align': [] }],
-                            ['clean'],                                         // remove formatting button
-                            ['link', 'image', 'video']                         // link and image, video
+                            ['clean'],
+                            ['link', 'image', 'video']
                         ];
 
                         const quill = new Quill(quillContainer, {
