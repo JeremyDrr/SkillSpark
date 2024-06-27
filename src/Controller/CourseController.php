@@ -112,11 +112,14 @@ class CourseController extends AbstractController
      * @param $chapter
      * @param PaginationService $paginationService
      * @param Course $course
+     * @param EntityManagerInterface $manager
      * @return Response
      */
     #[Route('/course/{slug}/{chapter<\d+>?1}', name: 'course_show')]
     public function show($chapter, PaginationService $paginationService, Course $course, EntityManagerInterface $manager): Response
     {
+        $this->denyAccessUnlessGranted('view', $course);
+
         $paginationService->setEntityClass(Chapter::class)
             ->setLimit(1)
             ->setPage($chapter)
@@ -150,6 +153,8 @@ class CourseController extends AbstractController
     public function delete(Course $course, EntityManagerInterface $manager): Response
     {
 
+        $this->denyAccessUnlessGranted('delete', $course);
+
         $manager->remove($course);
         $manager->flush();
 
@@ -169,6 +174,9 @@ class CourseController extends AbstractController
     #[Route('/course/{slug}/edit', name: 'course_edit')]
     public function edit(Request $request, Course $course, EntityManagerInterface $manager, StripeService $stripeService): Response
     {
+
+        $this->denyAccessUnlessGranted('edit', $course);
+
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
 

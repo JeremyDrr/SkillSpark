@@ -109,14 +109,16 @@ class AccountController extends AbstractController
     /**
      * @param Request $request
      * @param EntityManagerInterface $manager
+     * @param User $user
      * @return Response
      */
     #[Route('/user/{slug}/settings', name: 'user_edit')]
     #[IsGranted('ROLE_USER')]
-    public function edit(Request $request, EntityManagerInterface $manager): Response
+    public function edit(Request $request, EntityManagerInterface $manager, User $user): Response
     {
-
+        $this->denyAccessUnlessGranted('edit', $user);
         $user = $this->getUser();
+
 
         $form = $this->createForm(AccountType::class, $user);
         $form->handleRequest($request);
@@ -151,6 +153,7 @@ class AccountController extends AbstractController
      * @return void
      */
     #[Route('/logout', name: 'logout')]
+    #[IsGranted('ROLE_USER')]
     public function logout(){
 
     }
@@ -162,8 +165,10 @@ class AccountController extends AbstractController
      * @return RedirectResponse|Response
      */
     #[Route('/account/password-update', name: 'account_password')]
-    public function updatePassword(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager): RedirectResponse|Response
+    public function updatePassword(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager, User $user): RedirectResponse|Response
     {
+
+        $this->denyAccessUnlessGranted('edit', $user);
 
         $user = $this->getUser();
 

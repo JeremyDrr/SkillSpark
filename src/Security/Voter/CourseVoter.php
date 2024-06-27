@@ -2,43 +2,77 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\Course;
+use App\Entity\User;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\User\UserInterface;
 
-class CourseVoter extends Voter
-{
-    public const EDIT = 'POST_EDIT';
-    public const VIEW = 'POST_VIEW';
+class CourseVoter extends Voter{
 
-    protected function supports(string $attribute, mixed $subject): bool
+    private const VIEW = 'view';
+    private const DELETE = 'delete';
+    private const EDIT = 'edit';
+    private Security $security;
+
+    public function __construct(Security $security)
     {
-        // replace with your own logic
-        // https://symfony.com/doc/current/security/voters.html
-        return in_array($attribute, [self::EDIT, self::VIEW])
-            && $subject instanceof \App\Entity\Course;
+        $this->security = $security;
     }
 
-    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
+    protected function supports(string $attribute, $subject): bool
+    {
+        return in_array($attribute, [self::VIEW, self::DELETE, self::EDIT]) && $subject instanceof Course;
+    }
+
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
-        // if the user is anonymous, do not grant access
-        if (!$user instanceof UserInterface) {
+
+        if (!$user instanceof User) {
             return false;
         }
 
-        // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
-            case self::EDIT:
-                // logic to determine if the user can EDIT
-                // return true or false
-                break;
             case self::VIEW:
-                // logic to determine if the user can VIEW
-                // return true or false
-                break;
+                return $this->canView($subject, $user);
+                case self::DELETE:
+                    return $this->canDelete($subject, $user);
+                case self::EDIT:
+                    return $this->canEdit($subject, $user);
         }
 
         return false;
+    }
+
+    private function canView(Course $course, User $user): bool
+    {
+        return $this->security->isGranted('ROLE_USER') &&
+            ($this->isCourseFollowedByUser($user, $course) ||
+                $this->security->isGranted('ROLE_ADMIN') ||
+                $this->isCourseCreatedByUser($user, $course));
+    }
+
+    private function canDelete(Course $course, User $user): bool
+    {
+        return $this->security->isGranted('ROLE_ADMIN') ||
+            $this->isCourseCreatedByUser($user, $course);
+    }
+
+
+    private function canEdit(Course $course, User $user): bool
+    {
+        return $this->security->isGranted('ROLE_ADMIN') ||
+            $this->isCourseCreatedByUser($user, $course);
+    }
+
+    private function isCourseFollowedByUser(User $user, Course $course): bool
+    {
+        return $user->getCoursesFollowed()->contains($course);
+    }
+
+    private function isCourseCreatedByUser(User $user, Course $course): bool
+    {
+        return $course->getInstructor() == $user;
     }
 }
