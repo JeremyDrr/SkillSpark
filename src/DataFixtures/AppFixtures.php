@@ -7,6 +7,8 @@ use App\Entity\Course;
 use App\Entity\Level;
 use App\Entity\Role;
 use App\Entity\User;
+use App\EventSubscriber\CourseSubscriber;
+use App\Service\StripeService;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
@@ -15,22 +17,24 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AppFixtures extends Fixture
 {
     private $encoder;
+    private $stripeService;
 
-    public function __construct(UserPasswordHasherInterface $encoder)
+    public function __construct(UserPasswordHasherInterface $encoder, StripeService $stripeService)
     {
         $this->encoder = $encoder;
+        $this->stripeService = $stripeService;
     }
 
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create("en_GB");
 
-// Handle roles
+        // Handle roles
         $adminRole = new Role();
         $adminRole->setName('ROLE_ADMIN');
         $manager->persist($adminRole);
 
-// Handle levels
+        // Handle levels
         $levels = [];
         $beginner = new Level();
         $beginner->setName('Beginner');
@@ -45,7 +49,7 @@ class AppFixtures extends Fixture
         $levels[] = $advanced;
         $manager->persist($advanced);
 
-// Handle admin account
+        // Handle admin account
         $admin = new User();
         $admin->setFirstName("Jeremy")
             ->setLastName("Durrieu")
@@ -57,7 +61,7 @@ class AppFixtures extends Fixture
             ->setVerified(true);
         $manager->persist($admin);
 
-// Handle users
+        // Handle users
         $users = [];
         for ($i = 1; $i <= 20; $i++) {
             $user = new User();
@@ -78,10 +82,10 @@ class AppFixtures extends Fixture
             $users[] = $user;
         }
 
-// Flush users and levels before creating courses
+        // Flush users and levels before creating courses
         $manager->flush();
 
-// Handle categories
+        // Handle categories
         $categoryList = ['Coding', 'Cooking', 'Gardening', 'Music', 'Art & Design', 'Writing', 'Fitness & Health', 'Languages'];
         $categories = [];
         foreach ($categoryList as $categoryItem) {
@@ -93,10 +97,10 @@ class AppFixtures extends Fixture
             $manager->persist($category);
         }
 
-// Flush categories before creating courses
+        // Flush categories before creating courses
         $manager->flush();
 
-// Handle courses
+        // Handle courses
         for ($i = 0; $i < 10; $i++) {
             $course = new Course();
             $course->setTitle($faker->sentence)
@@ -108,7 +112,7 @@ class AppFixtures extends Fixture
                 ->setLevel($levels[mt_rand(0, count($levels) - 1)])
                 ->setCategory($faker->randomElement($categories));
 
-// Handle chapters
+            // Handle chapters
             for ($j = 1; $j <= $faker->numberBetween(1, 15); $j++) {
                 $chapter = new Chapter();
                 $chapter->setCourse($course)
@@ -118,10 +122,13 @@ class AppFixtures extends Fixture
                 $manager->persist($chapter);
             }
 
-// Handle students
+            // Handle students
             for ($k = 0; $k <= $faker->numberBetween(0, 5); $k++) {
                 $course->addStudent($faker->randomElement($users));
             }
+
+            $courseSubscriber = new CourseSubscriber($this->stripeService);
+            $courseSubscriber->handleStripeProductAndPrice($course);
 
             $manager->persist($course);
         }

@@ -8,11 +8,9 @@ use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
-use Stripe\Exception\ApiErrorException;
-use Stripe\StripeClient;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Bundle\MakerBundle\Str;
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
@@ -65,20 +63,16 @@ class Course
 
     #[ORM\ManyToOne(inversedBy: 'Courses')]
     private ?Category $category = null;
-    private StripeClient $stripeService;
+    private StripeService $stripeService;
 
 
     public function __construct()
     {
         $this->chapters = new ArrayCollection();
         $this->students = new ArrayCollection();
-        $this->stripeService = new StripeClient('sk_test_51MbwnNHop64x9ifAATHqkKTTirNMLNeAiENjP7gNHnRBfP77bTnjcOxFyODDeaXMDRFQg9MJodIfh1IKVqc8w82i003eFDYxsg');
 
     }
 
-    /**
-     * @throws ApiErrorException
-     */
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function PrePersist(): void
